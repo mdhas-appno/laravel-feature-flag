@@ -1,0 +1,62 @@
+{
+  "name": "friendsofcat/laravel-feature-flag",
+  "description": "Feature Flags for Laravel",
+  "authors": [
+    {
+      "name": "Alfred Nutile Inc",
+      "email": "me@alfrednutile.info"
+    },
+    {
+      "name": "Nathan Kirschbaum",
+      "email": "nathan@nathankirschbaum.com"
+    }
+  ],
+  "keywords": [
+    "feature-flags",
+    "feature-toggles",
+    "toggles"
+  ],
+  "require": {
+    "php": "^7.1.3",
+    "jowy/feature": "dev-master",
+    "orchestra/database": "^3.6.0"
+  },
+  "require-dev": {
+    "illuminate/support": "^5.6",
+    "mockery/mockery": "0.9.*",
+    "orchestra/testbench": "^3.6",
+    "phpunit/phpunit": "^7.0",
+    "ramsey/uuid": "^3.0",
+    "squizlabs/php_codesniffer": "^2.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "FriendsOfCat\\LaravelFeatureFlags\\": "src/"
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "3.0-dev"
+    },
+    "laravel": {
+      "providers": [
+        "FriendsOfCat\\LaravelFeatureFlags\\FeatureFlagsProvider"
+      ]
+    }
+  },
+  "scripts": {
+    "test": "phpunit",
+    "check-style": "phpcs -p --standard=PSR2 --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src tests",
+    "fix-style": "phpcbf -p --standard=PSR2 --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src tests"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
