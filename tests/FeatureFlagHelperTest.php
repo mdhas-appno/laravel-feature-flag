@@ -39,6 +39,5 @@ class FeatureFlagHelperTest extends TestCase
             ]
         );
         $this->registerFeatureFlags();
-
     }
 }

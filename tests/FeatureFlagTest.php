@@ -11,7 +11,6 @@ use FriendsOfCat\LaravelFeatureFlags\FeatureFlagUser;
 use Ramsey\Uuid\Uuid;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 
-
 class FeatureFlagTest extends TestCase
 {
     use DatabaseMigrations, FeatureFlagHelper;
@@ -170,7 +169,6 @@ class FeatureFlagTest extends TestCase
         $this->registerFeatureFlags();
 
         $this->get('/example')->assertSeeText("Testing On");
-
     }
 
 
@@ -190,6 +188,5 @@ class FeatureFlagTest extends TestCase
         $this->registerFeatureFlags();
 
         $this->get('/example')->assertSeeText("Testing Off");
-
     }
 }

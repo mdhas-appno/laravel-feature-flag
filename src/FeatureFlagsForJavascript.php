@@ -1,6 +1,7 @@
 <?php
 
 namespace FriendsOfCat\LaravelFeatureFlags;
+
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 
 class FeatureFlagsForJavascript
