@@ -2,6 +2,18 @@
   "name": "friendsofcat/laravel-feature-flag",
   "description": "Feature Flags for Laravel",
   "authors": [
+    {
+      "name": "Alfred Nutile Inc",
+      "email": "me@alfrednutile.info"
+    },
+    {
+      "name": "Nathan Kirschbaum",
+      "email": "nathan@nathankirschbaum.com"
+    },
+    {
+      "name": "Luiz Albertoni",
+      "email": "luiz.albertoni@gmail.com"
+    }
   ],
   "keywords": [
     "feature-flags",
