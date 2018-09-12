@@ -14,8 +14,10 @@ class FeatureFlag extends Model
 
     protected static function boot()
     {
+        parent::boot();
+
         static::saved(function ($model) {
-            \Cache::forget('feature_flags:all');
+            \Cache::forget(\FriendsOfCat\LaravelFeatureFlags\Feature::FEATURE_FLAG_CACHE_KEY);
         });
     }
 }

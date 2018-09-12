@@ -9,6 +9,8 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlagUser;
 use Ramsey\Uuid\Uuid;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
+
 
 class FeatureFlagTest extends TestCase
 {
@@ -148,5 +150,46 @@ class FeatureFlagTest extends TestCase
         //$this->registerFeatureFlags();
 
         //$this->get('/example')->assertDontSeeText("Testing Off")->assertSeeText("Testing On");
+    }
+
+
+    public function testOnForUserEmail()
+    {
+
+        $this->user = factory(FeatureFlagUser::class)->create(['email' => 'foo2@gmail.com']);
+
+        $this->be($this->user);
+
+        factory(\FriendsOfCat\LaravelFeatureFlags\FeatureFlag::class)->create(
+            [
+                'key' => 'testing',
+                'variants' => '{ "users": [ "foo@gmail.com", "foo2@gmail.com", "foo3@gmail.com" ] }'
+            ]
+        );
+
+        $this->registerFeatureFlags();
+
+        $this->get('/example')->assertSeeText("Testing On");
+
+    }
+
+
+    public function testOffForUserEmail()
+    {
+        $this->user = factory(FeatureFlagUser::class)->create(['email' => 'foo4@gmail.com']);
+
+        $this->be($this->user);
+
+        factory(\FriendsOfCat\LaravelFeatureFlags\FeatureFlag::class)->create(
+            [
+                'key' => 'testing',
+                'variants' => '{ "users": [ "foo@gmail.com", "foo2@gmail.com", "foo3@gmail.com" ] }'
+            ]
+        );
+
+        $this->registerFeatureFlags();
+
+        $this->get('/example')->assertSeeText("Testing Off");
+
     }
 }

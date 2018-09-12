@@ -6,6 +6,7 @@ use FriendsOfCat\LaravelFeatureFlags\Console\Command\SyncFlags;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Support\Facades\Log;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 
 /**
  * Class FeatureFlagsProvider
@@ -114,7 +115,7 @@ class FeatureFlagsProvider extends ServiceProvider
     {
         $gate->define('feature-flag', function ($user, $flag_id) {
             try {
-                return \Feature\Feature::isEnabled($flag_id);
+                return Feature::isEnabled($flag_id);
             } catch (\Exception $e) {
                 if (config("laravel-feature-flag.logging")) {
                     Log::info(

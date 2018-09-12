@@ -8,89 +8,97 @@
 
 namespace FriendsOfCat\LaravelFeatureFlags;
 
-use Feature\Contracts\World;
+use Illuminate\Support\Facades\Auth;
 
-class Feature implements World
+
+class Feature
 {
+    const ON  = "on";
+    const OFF = "off";
+    const FEATURE_FLAG_CACHE_KEY = "feature_flags:all";
 
     /**
-     * @param string $name
-     * @param mixed $default
-     * @return mixed
+     * @var array
      */
-    public function configValue($name, $default = null)
+    private $instance;
+
+    /**
+     * @var array
+     */
+    private $stanza;
+
+    /**
+     * @param array $stanza
+     */
+    public function __construct()
     {
-        // TODO: Implement configValue() method.
+        $this->instance = \Cache::get(Feature::FEATURE_FLAG_CACHE_KEY, []);
     }
 
     /**
-     * @return mixed
+     * @param $feature
+     * @return bool
      */
-    public function uaid()
+    public function isEnabled($feature)
     {
-        // TODO: Implement uaid() method.
+        $feature_variant = $this->getConfig($feature);
+
+        if($feature_variant != self::ON and $feature_variant != self::OFF) {
+            return $this->isUserEnabled($feature_variant);
+        }
+
+        return ($feature_variant == self::ON);
     }
 
     /**
-     * @return int
+     * @param $feature
+     * @return string
      */
-    public function userId()
+    private function getConfig($feature)
     {
-        // TODO: Implement userId() method.
+        if (isset($this->instance->stanza[$feature])) {
+            return $this->instance->stanza[$feature];
+        }
+
+        $feature_flag = FeatureFlag::where('key', $feature)->first();
+        if (isset($feature_flag)) {
+            return  $feature_flag->variants;
+        }
+
+        return self::OFF;
     }
+
+    /**
+     * @param $feature_variant
+     * @return bool
+     */
+    protected function isUserEnabled($feature_variant)
+    {
+        if ($user_email = $this->getUserEmail()) {
+
+            $result = (is_array($feature_variant)) ? json_decode($feature_variant['variants'], true) : json_decode($feature_variant, true);
+            $target_array = $result['users'];
+
+            if (in_array($user_email, $target_array)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     /**
      * @param string|int $userId
      * @return string
      */
-    public function userName($userId)
+    public function getUserEmail()
     {
-        // TODO: Implement userName() method.
+        if (Auth::guest()) {
+            return false;
+        }
+
+        return Auth::user()->email;
     }
 
-    /**
-     * @param int $userId
-     * @param int $groupdId
-     * @return bool
-     */
-    public function inGroup($userId, $groupdId)
-    {
-        // TODO: Implement inGroup() method.
-    }
 
-    /**
-     * @param int $userId
-     * @return bool
-     */
-    public function isAdmin($userId)
-    {
-        // TODO: Implement isAdmin() method.
-    }
-
-    /**
-     * @return bool
-     */
-    public function isInternalRequest()
-    {
-        // TODO: Implement isInternalRequest() method.
-    }
-
-    /**
-     * @return string
-     */
-    public function urlFeatures()
-    {
-        // TODO: Implement urlFeatures() method.
-    }
-
-    /**
-     * @param $name
-     * @param $variant
-     * @param $selector
-     * @return void
-     */
-    public function log($name, $variant, $selector)
-    {
-        // TODO: Implement log() method.
-    }
 }
