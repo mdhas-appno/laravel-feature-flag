@@ -1,124 +1,222 @@
-# GitHubLogin
+# Feature Flags In Laravel
 
 
+[![Latest Version on Packagist][ico-version]][link-packagist]
+[![Build Status][ico-travis]][link-travis]
+[![Coverage Status][ico-scrutinizer]][link-scrutinizer]
+[![Quality Score][ico-code-quality]][link-code-quality]
+
+
+  * [Overview](#overview)
+  * [Installing](#installing)
+  * [Usage](#usage)
+  * [Usage Non Auth](#usage-non-auth)
+  * [Example](#example)
+  * [Testing](#testing)
+  * [Todo](#todo)
+
+<a name=overview></a>
 ## Overview
 
-The GitHubLogin is a Laravel package which uses the socialite(https://github.com/laravel/socialite) to login a user by getting his github user account and permission.
-It basically get a github account and validate if the use is part of the expected organization and teams, and send a event with the user data.
-The expected organization and teams must be populated in database, which is possible to do by UI (See the UI section for more information).
+You can find a comprehensive blog post about [this library here](https://alfrednutile.info/posts/175). This project is a work in progress.
 
-## Requirements
+We are working on using FeatureFlags or Toggles in our applications. For one we are aiming to do all our work on mainline branch at all times so this would be a key coding discipline to use FeatureFlags so we can hide a feature in progress knowing it will not interfere with the application. For example if a hotfix or another feature is ready to go to production we can push that with no worries of the in progress feature.
 
-~~~
-"require": {
-    "php": ">=5.5.9",
-    "illuminate/support": "5.*",
-    "laravel/socialite": "^3.0@dev",
-    "knplabs/github-api": "^2.9",
-    "php-http/guzzle6-adapter": "^1.1",
-    "graham-campbell/github": "^7.4"
-  }
+At the core we use this library [Atriedes/feature](https://github.com/Atriedes/feature) as it has the logic needed to consider common feature flag states eg user, users, on, off, groups, admin, internal, random etc. However, we are also mixing in some nice Laravel [Authorization](https://laravel.com/docs/5.2/authorization) features so you can do things like:
+
+In a blade template:
+
+~~~php
+@can('feature-flag', 'add-twitter-field')
+<!-- code here -->
+@endcan
 ~~~
 
+Or in PHP:
 
-## Install
-
-Composer install
-
-~~~
-composer require friendsofcat/github-team-auth
-~~~
-
-Publish config File
-
-
-~~~
- php artisan vendor:publish
+~~~php
+if (Gate::allows('feature-flag', 'awesome-feature')) {
+    <!-- code here -->
+}
 ~~~
 
-Publish config file
-
-~~~
-php artisan vendor:publish --provider="Friendsofcat\GitHubTeamAuth\GitHubTeamAuthProvider" --tag='github_team_auth:config'
-~~~
-
-The config file has only onw parameter, team_table_name, whihc define the name of the table in database for githubteams names, the default value is 'teams'
-
-
-Publish migrations
-
-~~~
-php artisan vendor:publish --provider="Friendsofcat\GitHubTeamAuth\GitHubTeamAuthProvider" --tag='github_team_auth:migrations'
+~~~php
+if (Gate::denies('feature-flag', 'awesome-feature')) {
+    <!-- code here -->
+}
 ~~~
 
-Publish views
+If you need to pass your feature flags to a front-end JS framework like Angular or Vue.js, you can do so by using the FeatureFlagsForJavascript::get() static method.
+
+This uses this library [https://github.com/laracasts/PHP-Vars-To-Js-Transformer](https://github.com/laracasts/PHP-Vars-To-Js-Transformer) to put this info into the `windows` object, and for Angular the `$window` now you can access it:
 
 ~~~
-php artisan vendor:publish --provider="Friendsofcat\GitHubTeamAuth\GitHubTeamAuthProvider" --tag='github_team_auth:views'
+JavaScript::Put(
+            [
+                'pusher_public_key' => env('PUSHER_PUBLIC'),
+                'feature_flags'     => FeatureFlagsForJavascript::get()
+            ]
+        );
 ~~~
 
 
-Edit app/config/service.php to add the code below
-~~~
-    'github' => [
-        'client_id' => env('GITHUB_CLIENT_ID'),
-        'client_secret' => env('GITHUB_CLIENT_SECRET'),
-        'redirect' =>   'https://cat-quality-service.test/auth/github/callback',
-    ],
-~~~
+
+<a name=installing></a>
+## Installing
 
 
-Env file
-For service.php configurations is necessary to inform:
-
-- GITHUB_CLIENT_ID
-- GITHUB_CLIENT_SECRET
-- redirect ( whihc must be  https://{{APP_NAME}}/auth/github/callback ).
-
-You can get all these parameters after register the app in the github callback feature.
-
-## View to Manage Organization and orgs
-
-### https://{domain}/admin/github-team-auth
-This is the dashboard page which list all the team and orgs from this page you are able to delete an organization or team. Also you can navaguete to create team or create organization screen.
-
-### https://{domain}/admin/github-team-auth/add/team
-This page was design for add a new team, display the team possibilities using the github token storaged in cache when user logged in.
-Also allow the user add a tag for label the access level of team, it can be add by the 'acl' field.
-
-### https://{domain}/admin/github-team-auth/add/org
-This page was design for add a new team, display the organization possibilities using the github token storaged in cache when user logged in.
-
-## Event
-In the end of process the user will be login and an event will be trigger.
-This event has to public parameters:
-
-- user_github_object ( \Laravel\Socialite\Two\User )
-
-        Which contain all the user information.
-
-- user_team_array ( array )
-
-        An array with all the teams which this user is part of.
-
-
-## HTML
-You must add the git hub loggin button in your login page, as the example below:
+Require the package using composer:
 
 ~~~
-<a class="btn mb-2 btn-secondary"  href="{{ route('git_auth') }}">
-    <i class="fa fa-github"></i>&nbsp;GitHub
-</a>
-
-@if ($errors->has('github'))
-    <span class="help-block alert alert-dark">
-        <strong>{{ $errors->first('github') }}</strong>
-    </span>
-@endif
+composer require "friendsofcat/laravel-feature-flag"
 ~~~
 
+Add the following to your config/app.php providers array:
 
-## Chicken - Egg dilemma
+~~~
+FriendsOfCat\LaravelFeatureFlags\FeatureFlagsProvider::class,
+~~~
 
-For add a new Organization/Team the user need to be logged at the system, but for loggin the system must have some vaid organization and team in DB.
-To solve this problem create a migration and insert the basic organization and team.
+Publish the package migrations:
+
+~~~
+php artisan vendor:publish --provider="FriendsOfCat\LaravelFeatureFlags\FeatureFlagsProvider" --tag='migrations'
+~~~
+
+Then run migration to setup the base table:
+
+~~~
+php artisan migrate
+~~~
+
+This package creates a number of routes. They can be overridden by publishing the views:
+
+~~~
+php artisan vendor:publish --provider="FriendsOfCat\LaravelFeatureFlags\FeatureFlagsProvider" --tag='views'
+~~~
+
+This will then place the files in `resources/vendors/laravel-feature-flags`. Just note that the views `@extends('layouts.default')` so if yours differs you will need to make an adjustment to the published views files.
+
+Next, publish the configuration:
+
+~~~
+php artisan vendor:publish --provider="FriendsOfCat\LaravelFeatureFlags\FeatureFlagsProvider" --tag='config'
+~~~
+
+Important: The routes detault to being projected by the 'auth' middleware but you should check your installation to make sure permissions are acceptable. Middleware settings are configurable in 'config/laravel-feature-flag.php' file.
+
+
+
+Make sure to set the `default_view` as well for the layout.
+
+`config/laravel-feature-flag.php`
+
+Your .env
+```
+LARAVEL_FEATURE_FLAG_VIEW="layouts.default"
+```
+
+<a name=usage></a>
+## Usage
+
+Visit `/admin/feature_flags` to manage features via the UI.
+
+
+## Usage Non Auth
+
+Sometimes you are not using this at the Auth user level, it is rare for most of our use cases but for non authenticated situations you can just use this
+
+~~~
+if(\FriendsOfCat\LaravelFeatureFlags\Feature::isEnabled('see-twitter-field'))
+{
+  //do something
+}
+~~~
+
+Remember you needed to put this into the database, so it is on or off. You might not have a UI, maybe this is a microservice for example, so just migrate the state into the database for example
+
+~~~
+$feature = new FeatureFlag();
+$feature->key = "see-twitter-field";
+$feature->variants = "on"; //or "off"
+$feature->save();
+~~~
+
+Now when the FeatureFlag Provider instantiates it will set this as the "World" state and you can access it via the isEnabled "on" being true and "off" being false.
+
+<a name=example></a>
+## Demo / Example
+
+If you want to try the demo/example also include the following in your config/app.php providers array:
+
+~~~
+FriendsOfCat\LaravelFeatureFlags\ExampleFeatureProvider::class
+~~~
+
+and then run:
+
+~~~
+php artisan vendor:publish --provider="FriendsOfCat\LaravelFeatureFlags\ExampleFeatureProvider" --tag='migrations'
+php artisan migrate
+~~~
+
+It has a rollback to help clean up after.
+
+There is a dummy route called `/admin/feature_flags/example` that you can visit and it will show that it is not on. But if you then go to the admin UI `/admin/feature_flags` you can toggle it on and off.
+
+
+<a name=testing></a>
+## Testing
+
+> [Helper Package](https://github.com/orchestral/testbench)
+
+There is the settings page which I do have some Laravel tests for that you can run once the package is installed.
+
+Also if you are trying to test the use of it in your work you can use the helper trait in your test class
+
+```php
+
+    use DatabaseTransactions, \FriendsOfCat\LaravelFeatureFlags\FeatureFlagHelper;
+```
+
+Then from there factory out your additions and state then reregister the world
+
+```php
+
+    /**
+     * @test
+     */
+    public function should_fail_validation_since_twitter_missing()
+    {
+        //Make a form request
+        //Set validation on that related to twitter field
+        //make sure the feature flag is on
+
+        $user_id = Rhumsaa\Uuid\Uuid::uuid4()->toString();
+
+        $user = factory(\App\User::class)->create([
+            'id' => $user_id,
+            'is_admin' => 1
+        ]);
+
+        $this->actingAs($user);
+
+        factory(\FriendsOfCat\LaravelFeatureFlags\FeatureFlag::class)->create(
+            [
+                'key' => 'add-twitter-field',
+                'variants' => 'on'
+            ]
+        );
+
+        $this->registerFeatureFlags();
+        ////
+    }
+
+```
+
+<a name=todo></a>
+## TODO
+
+  * Use Model Events to do that level of work
+  * Cache of the FeatureFlag Settings and update Cache on Change
+  * Show how it works in the menu and other areas eg include and Provider
