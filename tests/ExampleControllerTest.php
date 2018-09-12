@@ -1,5 +1,6 @@
 <?php
 namespace Tests;
+
 use FriendsOfCat\LaravelFeatureFlags\AddExampleFeaturesTableSeeder;
 use FriendsOfCat\LaravelFeatureFlags\ExampleController;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlagSettingsController;
