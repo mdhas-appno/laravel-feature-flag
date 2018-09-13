@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/friendsofcat/laravel-feature-flag.svg?branch=master)](https://travis-ci.org/friendsofcat/laravel-feature-flag)
 
-[![Coverage Status](https://coveralls.io/github/friendsofcat/laravel-feature-flag/badge.svg?branch=%28HEAD+detached+at+FETCH_HEAD%29&t=iuIfr1)]
+[![Coverage Status](https://coveralls.io/repos/github/friendsofcat/laravel-feature-flag/badge.svg)](https://coveralls.io/github/friendsofcat/laravel-feature-flag)
 
   * [Overview](#overview)
   * [Installing](#installing)
