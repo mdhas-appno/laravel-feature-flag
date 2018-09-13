@@ -7,7 +7,6 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
-use FriendsOfCat\LaravelFeatureFlags\World;
 
 class FeatureFlagHelperTest extends TestCase
 {
@@ -16,8 +15,6 @@ class FeatureFlagHelperTest extends TestCase
 
     public function testCacheSettings()
     {
-        $world = new World();
-
         \Cache::shouldReceive("rememberForever")->twice();
 
         \Cache::shouldReceive("forget")->twice();
@@ -35,8 +32,6 @@ class FeatureFlagHelperTest extends TestCase
 
         \Auth::shouldReceive('user')->andReturn((object)["id" => 1]);
 
-        $this->assertEquals(1, $world->userId());
-
         $feature = factory(\FriendsOfCat\LaravelFeatureFlags\FeatureFlag::class)->create(
             [
                 'key' => 'bar',
@@ -44,7 +39,5 @@ class FeatureFlagHelperTest extends TestCase
             ]
         );
         $this->registerFeatureFlags();
-
-        $this->assertEquals(1, $world->userId());
     }
 }

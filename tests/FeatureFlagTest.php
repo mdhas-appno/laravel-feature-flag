@@ -9,6 +9,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlagUser;
 use Ramsey\Uuid\Uuid;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 use FriendsOfCat\LaravelFeatureFlags\AddExampleFeaturesTableSeeder;
 
 class FeatureFlagTest extends TestCase
@@ -197,4 +198,5 @@ class FeatureFlagTest extends TestCase
 
         $this->get('/example')->assertSeeText("Testing Off");
     }
+    
 }

@@ -9,6 +9,10 @@
     {
       "name": "Nathan Kirschbaum",
       "email": "nathan@nathankirschbaum.com"
+    },
+    {
+      "name": "Luiz Albertoni",
+      "email": "luiz.albertoni@gmail.com"
     }
   ],
   "keywords": [
@@ -18,7 +22,6 @@
   ],
   "require": {
     "php": "^7.1.3",
-    "jowy/feature": "dev-master",
     "orchestra/database": "^3.6.0"
   },
   "require-dev": {

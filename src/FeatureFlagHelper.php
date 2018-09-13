@@ -10,6 +10,7 @@
 namespace FriendsOfCat\LaravelFeatureFlags;
 
 use Illuminate\Support\Facades\Log;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
 
 trait FeatureFlagHelper
 {
@@ -17,7 +18,7 @@ trait FeatureFlagHelper
     public function registerFeatureFlags()
     {
         try {
-            $features = \Cache::rememberForever('feature_flags:all', function () {
+            \Cache::rememberForever(\FriendsOfCat\LaravelFeatureFlags\Feature::FEATURE_FLAG_CACHE_KEY, function () {
                 $features = FeatureFlag::all()->toArray();
 
                 foreach ($features as $key => $value) {
@@ -27,16 +28,9 @@ trait FeatureFlagHelper
 
                 return $features;
             });
-
-            if (!$features) {
-                $features = [];
-            }
-
-            $world = new World();
-
-            \Feature\Feature::create($world, $features);
         } catch (\Exception $e) {
             Log::info(sprintf("Silent Failure of Feature Flag %s", $e->getMessage()));
+            //Log::info($e->getTraceAsString());
         }
     }
 
