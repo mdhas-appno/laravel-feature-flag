@@ -198,43 +198,5 @@ class FeatureFlagTest extends TestCase
 
         $this->get('/example')->assertSeeText("Testing Off");
     }
-
-
-    public function testOnForUserEmail()
-    {
-
-        $this->user = factory(FeatureFlagUser::class)->create(['email' => 'foo2@gmail.com']);
-
-        $this->be($this->user);
-
-        factory(\FriendsOfCat\LaravelFeatureFlags\FeatureFlag::class)->create(
-            [
-                'key' => 'testing',
-                'variants' => '{ "users": [ "foo@gmail.com", "foo2@gmail.com", "foo3@gmail.com" ] }'
-            ]
-        );
-
-        $this->registerFeatureFlags();
-
-        $this->get('/example')->assertSeeText("Testing On");
-    }
-
-
-    public function testOffForUserEmail()
-    {
-        $this->user = factory(FeatureFlagUser::class)->create(['email' => 'foo4@gmail.com']);
-
-        $this->be($this->user);
-
-        factory(\FriendsOfCat\LaravelFeatureFlags\FeatureFlag::class)->create(
-            [
-                'key' => 'testing',
-                'variants' => '{ "users": [ "foo@gmail.com", "foo2@gmail.com", "foo3@gmail.com" ] }'
-            ]
-        );
-
-        $this->registerFeatureFlags();
-
-        $this->get('/example')->assertSeeText("Testing Off");
-    }
+    
 }
