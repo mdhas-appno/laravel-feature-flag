@@ -9,6 +9,10 @@
     {
       "name": "Nathan Kirschbaum",
       "email": "nathan@nathankirschbaum.com"
+    },
+    {
+      "name": "Luiz Albertoni",
+      "email": "luiz.albertoni@gmail.com"
     }
   ],
   "keywords": [
@@ -27,7 +31,8 @@
     "orchestra/testbench": "^3.6",
     "phpunit/phpunit": "^7.0",
     "ramsey/uuid": "^3.0",
-    "squizlabs/php_codesniffer": "^2.3"
+    "squizlabs/php_codesniffer": "^2.3",
+    "php-coveralls/php-coveralls": "^2.1"
   },
   "autoload": {
     "psr-4": {
