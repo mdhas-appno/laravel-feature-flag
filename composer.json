@@ -1,6 +1,7 @@
 {
   "name": "friendsofcat/laravel-feature-flag",
   "description": "Feature Flags for Laravel",
+  "license": "MIT",
   "authors": [
     {
       "name": "Alfred Nutile Inc",
