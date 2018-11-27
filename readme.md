@@ -141,6 +141,10 @@ $feature->save();
 
 Now when the FeatureFlag Provider instantiates it will set this as the "World" state and you can access it via the isEnabled "on" being true and "off" being false.
 
+## Syncing Flags
+
+Feature flags can be synchronised using the provided `feature-flag:sync` command. This will sync flags defined in the `sync_flags` configuration in the `laravel-feature-flag.php` config file. The format for this flag configuration is "key => default value". By default, any flags that are removed will be removed from storage. There is a `--skip-cleanup` flag available to skip this step.
+
 <a name=example></a>
 ## Demo / Example
 
