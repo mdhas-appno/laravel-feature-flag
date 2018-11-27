@@ -144,7 +144,7 @@ Now when the FeatureFlag Provider instantiates it will set this as the "World" s
 
 ## Syncing Flags
 
-Feature flags can be synchronised using the provided `feature-flag:sync` command. This will sync flags defined in the `sync_flags` configuration in the `laravel-feature-flag.php` config file. The format for this flag configuration is "key => default value". By default, any flags that are removed will be removed from storage. There is a `--skip-cleanup` flag available to skip this step.
+Feature flags can be synchronised using the provided `feature-flag:sync` command. This will sync flags defined in the [`sync_flags`](https://github.com/friendsofcat/laravel-feature-flag/blob/master/config/laravel-feature-flag.php#L24) configuration in the `laravel-feature-flag.php` config file. The format for this flag configuration is "key => default value". By default, any flags that are removed will be removed from storage. There is a `--skip-cleanup` flag available to skip this step.
 
 <a name=example></a>
 ## Demo / Example
