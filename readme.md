@@ -8,6 +8,7 @@
   * [Installing](#installing)
   * [Usage](#usage)
   * [Usage Non Auth](#usage-non-auth)
+  * [Syncing Flags](#syncing-flags)
   * [Example](#example)
   * [Testing](#testing)
   * [Todo](#todo)
