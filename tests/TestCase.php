@@ -2,20 +2,16 @@
 
 namespace Tests;
 
-use Illuminate\Foundation\Auth\User;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlagsProvider;
-use FriendsOfCat\LaravelFeatureFlags\ExampleFeatureProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
 
     protected function getPackageProviders($app)
     {
-        return
-            [
+        return [
             FeatureFlagsProvider::class,
-            ExampleFeatureProvider::class,
-            ];
+        ];
     }
 
 
@@ -31,8 +27,8 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         \View::addLocation(__DIR__ . '/../views');
 
-        $this->artisan('migrate', ['--database'=>'testing','--path'=>'migrations']);
-        $this->artisan('migrate', ['--database'=>'testing','--realpath'=> realpath(__DIR__.'/migrations')]);
+        $this->loadMigrationsFrom(__DIR__ . '/migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
     }
 
 
@@ -49,13 +45,6 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $app['config']->set('app.debug', env('APP_DEBUG', true));
 
         $app['config']->set('laravel-feature-flag.logging', true);
-
-//        $app['config']->set([
-//            'auth.providers.users' => [
-//                'driver' => '',
-//                'model' => User::class,
-//            ],
-//        ]);
 
         $app['config']->set('logging.default', 'single');
         $app['config']->set('logging.channels.single.path', __DIR__ . '/logs/laravel.log');

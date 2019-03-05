@@ -2,140 +2,43 @@
 
 namespace Tests;
 
+use FriendsOfCat\LaravelFeatureFlags\FeatureFlag;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlagHelper;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Auth\Access\Gate;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlagUser;
-use Ramsey\Uuid\Uuid;
-use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
-use FriendsOfCat\LaravelFeatureFlags\AddExampleFeaturesTableSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class FeatureFlagTest extends TestCase
 {
-    use DatabaseMigrations, FeatureFlagHelper;
+    use RefreshDatabase, FeatureFlagHelper;
 
     protected $user;
 
-    public function testShouldSeeFeatureAsAdmin()
+    public function testOn()
     {
-        $this->markTestSkipped("Gotta get this one working outside laravel");
-
-        $user_id = Uuid::uuid4()->toString();
-
-        $user = factory(FeatureFlagUser::class)->create([
-            'id' => $user_id,
-            'is_admin' => 1
-        ]);
-
-        $this->be($user);
-
-        factory(\FriendsOfCat\LaravelFeatureFlags\FeatureFlag::class)->create(
-            [
-                'key' => 'add-twitter-field',
-                'variants' => '{ "users": [ "' . $user->email . '" ]}'
-            ]
-        );
-
-        $path = '/admin/users/' . $user_id . '/edit';
-        $this->get($path)->see('Twitter Name');
-        $response = $this->call('GET', $path);
-        $this->assertEquals(200, $response->status());
-    }
-
-    public function testShouldNotSeeFeatureAsAdmin()
-    {
-        $this->markTestSkipped("Gotta get this one working outside laravel");
-        $user_id = Uuid::uuid4()->toString();
-
-        $user = factory(FeatureFlagUser::class)->create([
-            'id' => $user_id,
-            'is_admin' => 1
-        ]);
-
-        $this->be($user);
-
-        factory(\FriendsOfCat\LaravelFeatureFlags\FeatureFlag::class)->create(
-            [
-                'key' => 'add-twitter-field',
-                'variants' => '{ "users": [ "foo" ]}'
-            ]
-        );
-
-        $path = '/admin/users/' . $user_id . '/edit';
-        $this->get($path)->dontSee('Twitter Name');
-
-        $response = $this->call('GET', $path);
-
-        $this->assertEquals(200, $response->status());
-    }
-
-    public function testShouldSeeFeatureOnProfile()
-    {
-        $this->markTestSkipped("Gotta get this one working outside laravel");
-        $user_id = Uuid::uuid4()->toString();
-
-        $user = factory(FeatureFlagUser::class)->create([
-            'id' => $user_id,
-            'is_admin' => 1
-        ]);
-
-        $this->actingAs($user);
-
-        factory(\FriendsOfCat\LaravelFeatureFlags\FeatureFlag::class)->create(
-            [
-                'key' => 'see-twitter-field',
-                'variants' => '{ "users": [ "' . $user->email . '" ]}'
-            ]
-        );
-
-        $path = '/profile/' . $user_id;
-        $this->get($path)->see('Twitter Name');
-        $response = $this->call('GET', $path);
-        $this->assertEquals(200, $response->status());
-    }
-
-    public function testNotSeeTwitterOnProfilePage()
-    {
-        $this->markTestSkipped("Gotta get this one working outside laravel");
-        $user_id = str_random(32);
-
-        $user = factory(FeatureFlagUser::class)->create([
-            'id' => $user_id,
-            'is_admin' => 1,
-            'twitter' => 'footwitter'
-        ]);
-
-        $this->actingAs($user);
-
-        factory(\FriendsOfCat\LaravelFeatureFlags\FeatureFlag::class)->create(
-            [
-                'key' => 'see-twitter-field',
-                'variants' => '{ "users": [ "not_you" ]}'
-            ]
-        );
-
-        $this->get('/profile/' . $user_id)->dontSee('Twitter Name');
-
-        $response = $this->call('GET', '/profile/' . $user_id);
-
-        $this->assertEquals(200, $response->status());
-    }
-
-
-    public function testOnOff()
-    {
-
         $this->user = factory(FeatureFlagUser::class)->create();
 
         $this->be($this->user);
 
-        $calss = new AddExampleFeaturesTableSeeder();
-        $calss->run();
+        factory(FeatureFlag::class)->create(
+            [
+                'key' => 'testing',
+                'variants' => 'on'
+            ]
+        );
 
+        $this->registerFeatureFlags();
 
-        $feature = factory(\FriendsOfCat\LaravelFeatureFlags\FeatureFlag::class)->create(
+        $this->assertTrue($this->app->get(Gate::class)->allows('feature-flag', 'testing'));
+    }
+
+    public function testOff()
+    {
+        $this->user = factory(FeatureFlagUser::class)->create();
+
+        $this->be($this->user);
+
+        factory(FeatureFlag::class)->create(
             [
                 'key' => 'testing',
                 'variants' => 'off'
@@ -144,29 +47,32 @@ class FeatureFlagTest extends TestCase
 
         $this->registerFeatureFlags();
 
-        $this->get('/example')->assertSeeText("Testing Off");
+        $this->assertFalse($this->app->get(Gate::class)->allows('feature-flag', 'testing'));
     }
 
 
     public function testOnForUserEmail()
     {
-
-        $this->markTestSkipped("Gotta get this one working outside laravel");
-
         $this->user = factory(FeatureFlagUser::class)->create(['email' => 'foo2@gmail.com']);
 
         $this->be($this->user);
 
-        factory(\FriendsOfCat\LaravelFeatureFlags\FeatureFlag::class)->create(
+        factory(FeatureFlag::class)->create(
             [
                 'key' => 'testing',
-                'variants' => '{ "users": [ "foo@gmail.com", "foo2@gmail.com", "foo3@gmail.com" ] }'
+                'variants' => [
+                    'users' => [
+                        'foo@gmail.com',
+                        'foo2@gmail.com',
+                        'foo3@gmail.com'
+                    ]
+                ]
             ]
         );
 
         $this->registerFeatureFlags();
 
-        $this->get('/example')->assertSeeText("Testing On");
+        $this->assertTrue($this->app->get(Gate::class)->allows('feature-flag', 'testing'));
     }
 
 
@@ -177,16 +83,22 @@ class FeatureFlagTest extends TestCase
 
         $this->be($this->user);
 
-        factory(\FriendsOfCat\LaravelFeatureFlags\FeatureFlag::class)->create(
+        factory(FeatureFlag::class)->create(
             [
                 'key' => 'testing',
-                'variants' => '{ "users": [ "foo@gmail.com", "foo2@gmail.com", "foo3@gmail.com" ] }'
+                'variants' => [
+                    'users' => [
+                        'foo@gmail.com',
+                        'foo2@gmail.com',
+                        'foo3@gmail.com'
+                    ]
+                ]
             ]
         );
 
         $this->registerFeatureFlags();
 
-        $this->get('/example')->assertSeeText("Testing Off");
+        $this->assertFalse($this->app->get(Gate::class)->allows('feature-flag', 'testing'));
     }
 
 
@@ -196,7 +108,7 @@ class FeatureFlagTest extends TestCase
 
         $this->be($this->user);
 
-        $this->get('/example')->assertSeeText("Testing Off");
+        $this->assertFalse($this->app->get(Gate::class)->allows('feature-flag', 'testing'));
     }
-    
+
 }
