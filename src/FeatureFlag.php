@@ -17,7 +17,7 @@ class FeatureFlag extends Model
         parent::boot();
 
         static::saved(function ($model) {
-            \Cache::forget(\FriendsOfCat\LaravelFeatureFlags\Feature::FEATURE_FLAG_CACHE_KEY);
+            \Cache::forget(Feature::FEATURE_FLAG_CACHE_KEY);
         });
     }
 }

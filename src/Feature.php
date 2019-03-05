@@ -74,14 +74,17 @@ class Feature
     protected function isUserEnabled($feature_variant)
     {
         if ($user_email = $this->getUserEmail()) {
-            $result = (is_array($feature_variant)) ? json_decode($feature_variant['variants'], true) :
-                json_decode($feature_variant, true);
-            $target_array = $result['users'];
-
-            if (in_array($user_email, $target_array)) {
-                return true;
+            if (empty($feature_variant['users'])) {
+                return false;
             }
+
+            return in_array(
+                strtolower($user_email),
+                array_map('strtolower', $feature_variant['users']),
+                true
+            );
         }
+
         return false;
     }
 
