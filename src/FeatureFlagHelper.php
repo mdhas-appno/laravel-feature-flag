@@ -29,7 +29,6 @@ trait FeatureFlagHelper
                 return $features;
             });
         } catch (\Exception $e) {
-            Log::info(sprintf("Silent Failure of Feature Flag %s", $e->getMessage()));
             //Log::info($e->getTraceAsString());
         }
     }
