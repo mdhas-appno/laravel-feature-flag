@@ -14,7 +14,6 @@ class TestCase extends \Orchestra\Testbench\TestCase
         ];
     }
 
-
     public function setUp()
     {
         parent::setUp();
@@ -45,6 +44,8 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $app['config']->set('app.debug', env('APP_DEBUG', true));
 
         $app['config']->set('laravel-feature-flag.logging', true);
+
+        $app['config']->set('cache.default', 'array');
 
         $app['config']->set('logging.default', 'single');
         $app['config']->set('logging.channels.single.path', __DIR__ . '/logs/laravel.log');
