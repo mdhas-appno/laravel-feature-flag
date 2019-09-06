@@ -1,20 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: alfrednutile
- * Date: 1/24/16
- * Time: 11:06 AM
- */
 
 namespace FriendsOfCat\LaravelFeatureFlags;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class Feature
 {
-    const ON  = "on";
-    const OFF = "off";
-    const FEATURE_FLAG_CACHE_KEY = "feature_flags:all";
+    const ON = 'on';
+    const OFF = 'off';
+    const FEATURE_FLAG_CACHE_KEY = 'feature_flags:all';
 
     /**
      * @var array
@@ -22,46 +17,47 @@ class Feature
     private $instance;
 
     /**
-     * @var array
-     */
-    private $stanza;
-
-    /**
      * @param array $stanza
      */
     public function __construct()
     {
-        $this->instance = \Cache::get(Feature::FEATURE_FLAG_CACHE_KEY, []);
+        $this->instance = Cache::get(Feature::FEATURE_FLAG_CACHE_KEY, []);
     }
 
     /**
-     * @param $feature
+     * Check if a feature flag is enabled.
+     *
+     * @param string $featureKey
+     * @param mixed $variant (optional)
      * @return bool
      */
-    public function isEnabled($feature)
+    public function isEnabled($featureKey, $variant = null)
     {
-        $feature_variant = $this->getConfig($feature);
-
-        if ($feature_variant != self::ON and $feature_variant != self::OFF) {
-            return $this->isUserEnabled($feature_variant);
+        if (! $variant) {
+            $variant = $this->getConfig($featureKey);
         }
 
-        return ($feature_variant == self::ON);
+        if ($variant != self::ON and $variant != self::OFF) {
+            return $this->isUserEnabled($variant);
+        }
+
+        return $variant == self::ON;
     }
 
     /**
-     * @param $feature
-     * @return string
+     * @param string $featureKey
+     * @return mixed
      */
-    private function getConfig($feature)
+    private function getConfig($featureKey)
     {
-        if (isset($this->instance->stanza[$feature])) {
-            return $this->instance->stanza[$feature];
+        if (isset($this->instance[$featureKey])) {
+            return $this->instance[$featureKey];
         }
 
-        $feature_flag = FeatureFlag::where('key', $feature)->first();
-        if (isset($feature_flag)) {
-            return  $feature_flag->variants;
+        $featureFlag = FeatureFlag::where('key', $featureKey)->first();
+
+        if (isset($featureFlag)) {
+            return  $featureFlag->variants;
         }
 
         return self::OFF;
