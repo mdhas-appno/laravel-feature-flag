@@ -16,9 +16,6 @@ class Feature
      */
     private $instance;
 
-    /**
-     * @param array $stanza
-     */
     public function __construct()
     {
         $this->instance = Cache::get(Feature::FEATURE_FLAG_CACHE_KEY, []);
@@ -48,7 +45,7 @@ class Feature
      * @param string $featureKey
      * @return mixed
      */
-    private function getConfig($featureKey)
+    public function getConfig($featureKey)
     {
         if (isset($this->instance[$featureKey])) {
             return $this->instance[$featureKey];
