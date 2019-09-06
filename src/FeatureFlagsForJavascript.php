@@ -2,19 +2,26 @@
 
 namespace FriendsOfCat\LaravelFeatureFlags;
 
-use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
+use Illuminate\Support\Facades\Cache;
+use Facades\FriendsOfCat\LaravelFeatureFlags\Feature as FeatureFacade;
 
 class FeatureFlagsForJavascript
 {
+    use FeatureFlagHelper;
+
+    /**
+     * @return array
+     */
     public static function get()
     {
-        $flags = FeatureFlag::all();
-
-        $results = [];
-        foreach ($flags as $feature_flag) {
-            $results[$feature_flag->key] = Feature::isEnabled($feature_flag->key);
+        if (! Cache::has(Feature::FEATURE_FLAG_CACHE_KEY)) {
+            (new self)->registerFeatureFlags();
         }
 
-        return $results;
+        $flags = Cache::get(Feature::FEATURE_FLAG_CACHE_KEY);
+
+        return collect($flags)->map(function ($variant, $key) {
+            return FeatureFacade::isEnabled($key, $variant);
+        })->toArray();
     }
 }

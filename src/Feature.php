@@ -25,12 +25,17 @@ class Feature
     }
 
     /**
+     * Check if a feature flag is enabled.
+     *
      * @param string $featureKey
+     * @param mixed $variant (optional)
      * @return bool
      */
-    public function isEnabled($featureKey)
+    public function isEnabled($featureKey, $variant = null)
     {
-        $variant = $this->getConfig($featureKey);
+        if (! $variant) {
+            $variant = $this->getConfig($featureKey);
+        }
 
         if ($variant != self::ON and $variant != self::OFF) {
             return $this->isUserEnabled($variant);
