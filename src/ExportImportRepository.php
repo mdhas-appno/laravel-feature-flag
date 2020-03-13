@@ -2,6 +2,8 @@
 
 namespace FriendsOfCat\LaravelFeatureFlags;
 
+use Illuminate\Support\Arr;
+
 class ExportImportRepository
 {
 
@@ -16,7 +18,7 @@ class ExportImportRepository
     {
         FeatureFlag::unguard();
         foreach ($features as $feature) {
-            $key = array_get($feature, "key");
+            $key = Arr::get($feature, "key");
             FeatureFlag::updateOrCreate(["key" => $key], $feature);
         }
         FeatureFlag::reguard();

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 use FriendsOfCat\LaravelFeatureFlags\ExportImportRepository;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlag;
 
-class ExportTest extends TestCase
+class ExportImportRepositoryTest extends TestCase
 {
     use DatabaseMigrations;
 
