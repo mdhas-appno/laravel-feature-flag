@@ -2,15 +2,15 @@
 
 <h2>Set your feature flags</h2>
 
-<ul class="nav nav-tabs" role="tablist">
-    <li role="presentation" class="active">
-        <a href="#settings" role="tab" data-toggle="tab">Settings</a>
+<ul class="nav nav-tabs">
+    <li role="presentation" class="nav-item active">
+        <a class="nav-link active" href="#settings" role="tab" data-toggle="tab">Settings</a>
     </li>
-    <li role="presentation">
-        <a href="#export" role="tab" data-toggle="tab">Export</a>
+    <li role="presentation" class="nav-item">
+        <a class="nav-link" href="#export" role="tab" class="nav-item" data-toggle="tab">Export</a>
     </li>
-    <li role="presentation">
-        <a href="#import" role="tab" data-toggle="tab">Import</a>
+    <li role="presentation" class="nav-item">
+        <a class="nav-link" href="#import" role="tab" class="nav-item" data-toggle="tab">Import</a>
     </li>
 </ul>
 
@@ -25,7 +25,7 @@
 
 
 
-        <a class="btn btn-default" href="{{ route('laravel-feature-flag.create_form') }}">Create Feature Flag</a>
+        <a class="btn btn-success" href="{{ route('laravel-feature-flag.create_form') }}">Create Feature Flag</a>
         <hr>
         <table class="table table-striped">
             <thead>
