@@ -8,6 +8,7 @@ use FriendsOfCat\LaravelFeatureFlags\Feature;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlag;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlagUser;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlagHelper;
+use FriendsOfCat\LaravelFeatureFlags\FeatureFlagsForJavascript;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 /**
@@ -35,6 +36,8 @@ class FeatureTest extends TestCase
             'key' => 'feature_2',
             'variants' => 'off'
         ]);
+
+        FeatureFlagsForJavascript::get();
 
         $this->assertTrue((new Feature)->exists('feature_1'));
         $this->assertTrue((new Feature)->exists('feature_2'));
