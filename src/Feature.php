@@ -22,6 +22,18 @@ class Feature
     }
 
     /**
+    * Check if a feature flag exists.
+    *
+    * @param string $featureKey
+    * @param mixed $variant (optional)
+    * @return bool
+    */
+    public function exists($featureKey)
+    {
+        return isset($this->instance[$featureKey]);
+    }
+
+    /**
      * Check if a feature flag is enabled.
      *
      * @param string $featureKey

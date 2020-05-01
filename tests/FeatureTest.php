@@ -8,6 +8,7 @@ use FriendsOfCat\LaravelFeatureFlags\Feature;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlag;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlagUser;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlagHelper;
+use FriendsOfCat\LaravelFeatureFlags\FeatureFlagsForJavascript;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 /**
@@ -16,6 +17,32 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 class FeatureTest extends TestCase
 {
     use DatabaseTransactions, FeatureFlagHelper;
+
+    /**
+     * @test
+     * @covers ::isEnabled
+     */
+    public function testExists()
+    {
+        $user = factory(FeatureFlagUser::class)->create();
+        $this->be($user);
+
+        factory(FeatureFlag::class)->create([
+            'key' => 'feature_1',
+            'variants' => 'on'
+        ]);
+
+        factory(FeatureFlag::class)->create([
+            'key' => 'feature_2',
+            'variants' => 'off'
+        ]);
+
+        FeatureFlagsForJavascript::get();
+
+        $this->assertTrue((new Feature)->exists('feature_1'));
+        $this->assertTrue((new Feature)->exists('feature_2'));
+        $this->assertFalse((new Feature)->exists('feature_3'));
+    }
 
     /**
      * @test
