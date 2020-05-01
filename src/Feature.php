@@ -30,13 +30,7 @@ class Feature
     */
     public function exists($featureKey)
     {
-        $featureFlag = FeatureFlag::where('key', $featureKey)->first();
-
-        if (isset($featureFlag)) {
-            return true;
-        }
-
-        return false;
+        return isset($this->instance[$featureKey]);
     }
 
     /**
