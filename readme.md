@@ -119,6 +119,16 @@ LARAVEL_FEATURE_FLAG_VIEW="layouts.default"
 
 Visit `/admin/feature_flags` to manage features via the UI.
 
+### Checking if a feature flag exists
+For this you can use the exists() method
+
+~~~
+if(\FriendsOfCat\LaravelFeatureFlags\Feature::exists('see-twitter-field'))
+{
+  //do something
+}
+~~~
+
 
 ## Usage Non Auth
 

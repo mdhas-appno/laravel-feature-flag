@@ -21,6 +21,30 @@ class FeatureTest extends TestCase
      * @test
      * @covers ::isEnabled
      */
+    public function testExists()
+    {
+        $user = factory(FeatureFlagUser::class)->create();
+        $this->be($user);
+
+        factory(FeatureFlag::class)->create([
+            'key' => 'feature_1',
+            'variants' => 'on'
+        ]);
+
+        factory(FeatureFlag::class)->create([
+            'key' => 'feature_2',
+            'variants' => 'off'
+        ]);
+
+        $this->assertTrue((new Feature)->exists('feature_1'));
+        $this->assertTrue((new Feature)->exists('feature_2'));
+        $this->assertFalse((new Feature)->exists('feature_3'));
+    }
+
+    /**
+     * @test
+     * @covers ::isEnabled
+     */
     public function testIsEnabledPassingKey()
     {
         $user = factory(FeatureFlagUser::class)->create();

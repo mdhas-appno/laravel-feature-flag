@@ -22,6 +22,24 @@ class Feature
     }
 
     /**
+    * Check if a feature flag exists.
+    *
+    * @param string $featureKey
+    * @param mixed $variant (optional)
+    * @return bool
+    */
+    public function exists($featureKey)
+    {
+        $featureFlag = FeatureFlag::where('key', $featureKey)->first();
+
+        if (isset($featureFlag)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Check if a feature flag is enabled.
      *
      * @param string $featureKey
