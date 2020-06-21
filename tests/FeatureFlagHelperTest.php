@@ -30,7 +30,7 @@ class FeatureFlagHelperTest extends TestCase
 
         \Auth::shouldReceive('guest')->andReturn(false);
 
-        \Auth::shouldReceive('user')->andReturn((object)["id" => 1]);
+        \Auth::shouldReceive('user')->andReturn((object) ["id" => 1]);
 
         $feature = factory(\FriendsOfCat\LaravelFeatureFlags\FeatureFlag::class)->create(
             [
@@ -39,5 +39,14 @@ class FeatureFlagHelperTest extends TestCase
             ]
         );
         $this->registerFeatureFlags();
+    }
+
+    public function testFormatRemoveQuotes()
+    {
+        $results = $this->formatVariant('"on"');
+        $this->assertEquals("on", $results);
+
+        $results = $this->formatVariant('\'on\'');
+        $this->assertEquals("on", $results);
     }
 }
