@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: luiz.albertoni
@@ -48,7 +49,7 @@ class FeatureFlagSettingControllerTest extends TestCase
         $request = new Request();
         $feature_flag = '[{ "key": "add-twitter-field", "variants": "off"}]';
 
-        $request->merge(['features' => $feature_flag ]);
+        $request->merge(['features' => $feature_flag]);
 
 
         $example_controller = \App::make(FeatureFlagSettingsController::class);
@@ -66,7 +67,7 @@ class FeatureFlagSettingControllerTest extends TestCase
         $request = new Request();
 
 
-        $request->merge(['features' => [] ]);
+        $request->merge(['features' => []]);
 
 
         $example_controller = \App::make(FeatureFlagSettingsController::class);
@@ -78,7 +79,7 @@ class FeatureFlagSettingControllerTest extends TestCase
     public function testShouldStore()
     {
         $request = new Request();
-        $request->merge(['key' => 'test_A', 'variants' => 'on' ]);
+        $request->merge(['key' => 'test_A', 'variants' => 'on']);
 
 
         $example_controller = \App::make(FeatureFlagSettingsController::class);
@@ -89,12 +90,12 @@ class FeatureFlagSettingControllerTest extends TestCase
     public function testShouldStoreFail()
     {
         $request = new Request();
-        $request->merge(['key' => null, 'variants' =>null ]);
+        $request->merge(['key' => null, 'variants' => null]);
 
 
         $example_controller = \App::make(FeatureFlagSettingsController::class);
         $data = $example_controller->store($request);
-        $this->assertEquals($data->getSession()->get('message'), 'Could not find feature flag');
+        $this->assertEquals($data->getSession()->get('message'), 'Could save feature flag');
     }
 
     public function testShouldEdit()
@@ -125,7 +126,7 @@ class FeatureFlagSettingControllerTest extends TestCase
         $example_features->run();
 
         $request = new Request();
-        $request->merge([ 'variants' => '["on"]' ]);
+        $request->merge(['variants' => '["on"]']);
         $feature_flag = FeatureFlag::Where('key', 'add-twitter-field')->first();
 
         $example_controller = \App::make(FeatureFlagSettingsController::class);
@@ -145,7 +146,7 @@ class FeatureFlagSettingControllerTest extends TestCase
         $example_controller = \App::make(FeatureFlagSettingsController::class);
         $data = $example_controller->update($request, null);
 
-        $this->assertEquals($data->getSession()->get('message'), "Could not find feature flag");
+        $this->assertEquals($data->getSession()->get('message'), "Could not update feature flag");
     }
 
     public function testShouldDestroy()
