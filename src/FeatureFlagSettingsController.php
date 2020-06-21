@@ -53,7 +53,9 @@ class FeatureFlagSettingsController extends Controller
 
             return redirect()->route('laravel-feature-flag.index')->withMessage("Created Feature");
         } catch (\Exception $e) {
-            return redirect()->route('laravel-feature-flag.index')->withMessage("Could not find feature flag");
+            \Log::error("Error storing feature flags");
+            \Log::error($e);
+            return redirect()->route('laravel-feature-flag.index')->withMessage("Could save feature flag");
         }
     }
 
@@ -80,7 +82,9 @@ class FeatureFlagSettingsController extends Controller
                 'laravel-feature-flag.index'
             )->withMessage(sprintf("Feature Flag Updated %d", $id));
         } catch (\Exception $e) {
-            return redirect()->route('laravel-feature-flag.index')->withMessage("Could not find feature flag");
+            \Log::error("Error updating feature flags");
+            \Log::error($e);
+            return redirect()->route('laravel-feature-flag.index')->withMessage("Could not update feature flag");
         }
     }
 
@@ -95,6 +99,8 @@ class FeatureFlagSettingsController extends Controller
                 'laravel-feature-flag.index'
             )->withMessage(sprintf("Feature Flag deleted %d", $id));
         } catch (\Exception $e) {
+            \Log::error("Error deleting feature flags");
+            \Log::error($e);
             return redirect()->route('laravel-feature-flag.index')
                 ->withMessage("Could not find feature flag");
         }

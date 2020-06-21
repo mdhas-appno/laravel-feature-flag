@@ -11,7 +11,10 @@ class FeatureFlag extends Model
         'variants' => 'json',
     ];
 
-    public $timestamps = false;
+    protected $fillable = [
+        "usage_count", "variants"
+    ];
+
 
     protected static function boot()
     {

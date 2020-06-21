@@ -50,6 +50,16 @@ class FeatureFlagTest extends TestCase
         $this->assertFalse($this->app->get(Gate::class)->allows('feature-flag', 'testing'));
     }
 
+    public function testTimeStamp()
+    {
+        $feature = factory(FeatureFlag::class)->create(
+            ['usage_count' => 2, "variants" => "off"]
+        );
+
+        $this->assertNotNull($feature->created_at);
+        $this->assertNotNull($feature->updated_at);
+    }
+
 
     public function testOnForUserEmail()
     {
@@ -110,5 +120,4 @@ class FeatureFlagTest extends TestCase
 
         $this->assertFalse($this->app->get(Gate::class)->allows('feature-flag', 'testing'));
     }
-
 }

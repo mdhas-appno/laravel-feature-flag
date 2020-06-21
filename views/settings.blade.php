@@ -33,6 +33,8 @@
                     <td>ID</td>
                     <td>Key</td>
                     <td>Variant</td>
+                    <td>Created At</td>
+                    <td>Updated</td>
                     <td>Edit</td>
                     <td>Delete</td>
                 </tr>
@@ -42,6 +44,12 @@
                 <td>#{{ $setting->id }}</td>
                 <td>{{ $setting->key }}</td>
                 <td>{{ json_encode($setting->variants, JSON_PRETTY_PRINT) }}</td>
+                <td>
+                    @if($setting->created_at) {{ $setting->created_at->toFormattedDateString() }} @else "empty" @endif
+                </td>
+                <td>
+                    @if($setting->updated_at) {{ $setting->updated_at->diffForHumans()}} @else "empty" @endif
+                </td>
                 <td>
                     <a class="btn btn-success" href="/admin/feature_flags/{{ $setting->id }}/edit">Edit</a>
                 </td>
