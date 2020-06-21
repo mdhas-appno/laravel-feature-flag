@@ -33,6 +33,11 @@ trait FeatureFlagHelper
         }
     }
 
+    public function formatVariant($variant)
+    {
+        return str_replace("\"", "", $variant);
+    }
+
     private function transformFeatures($features, $value, $key)
     {
         $features[$value['key']] = $this->getAndSetValue($value);
