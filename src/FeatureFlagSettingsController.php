@@ -8,6 +8,8 @@ use Illuminate\Routing\Controller;
 class FeatureFlagSettingsController extends Controller
 {
 
+    use FeatureFlagHelper;
+
     public function getSettings(ExportImportRepository $repo)
     {
         try {
@@ -48,9 +50,8 @@ class FeatureFlagSettingsController extends Controller
         try {
             $flag = new FeatureFlag();
             $flag->key = $request->input('key');
-            $flag->variants = $request->input('variants');
+            $flag->variants = $this->formatVariant($request->input('variants'));
             $flag->save();
-
             return redirect()->route('laravel-feature-flag.index')->withMessage("Created Feature");
         } catch (\Exception $e) {
             \Log::error("Error storing feature flags");
