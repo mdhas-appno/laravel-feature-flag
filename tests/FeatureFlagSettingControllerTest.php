@@ -76,6 +76,34 @@ class FeatureFlagSettingControllerTest extends TestCase
         $this->assertEquals($data->getSession()->get('message'), 'Could not import feature flags');
     }
 
+    public function testStripQuotes()
+    {
+        $request = new Request();
+        $request->merge(['key' => 'test_A', 'variants' => '"on"']);
+
+        $example_controller = \App::make(FeatureFlagSettingsController::class);
+        $data = $example_controller->store($request);
+
+        $flag = FeatureFlag::first();
+        $this->assertNotNull($flag);
+        $this->assertEquals("on", $flag->variants);
+        $this->assertEquals($data->getSession()->get('message'), 'Created Feature');
+    }
+
+    public function testStripSingleQuotes()
+    {
+        $request = new Request();
+        $request->merge(['key' => 'test_A', 'variants' => '\'on\'']);
+
+        $example_controller = \App::make(FeatureFlagSettingsController::class);
+        $data = $example_controller->store($request);
+
+        $flag = FeatureFlag::first();
+        $this->assertNotNull($flag);
+        $this->assertEquals("on", $flag->variants);
+        $this->assertEquals($data->getSession()->get('message'), 'Created Feature');
+    }
+
     public function testShouldStore()
     {
         $request = new Request();
@@ -98,13 +126,15 @@ class FeatureFlagSettingControllerTest extends TestCase
         $this->assertEquals($data->getSession()->get('message'), 'Could save feature flag');
     }
 
+
+
     public function testShouldEdit()
     {
 
         $example_features = new AddExampleFeaturesTableSeeder();
         $example_features->run();
 
-        $feature_flag = FeatureFlag::Where('key', 'add-twitter-field')->first();
+        $feature_flag = FeatureFlag::where('key', 'add-twitter-field')->first();
 
         $example_controller = \App::make(FeatureFlagSettingsController::class);
         $data = $example_controller->edit($feature_flag->id)->getData();
@@ -120,6 +150,7 @@ class FeatureFlagSettingControllerTest extends TestCase
         $this->assertEquals($data->getSession()->get('message'), 'Could not find feature flag');
     }
 
+
     public function testShouldUpdate()
     {
         $example_features = new AddExampleFeaturesTableSeeder();
@@ -127,12 +158,11 @@ class FeatureFlagSettingControllerTest extends TestCase
 
         $request = new Request();
         $request->merge(['variants' => '["on"]']);
-        $feature_flag = FeatureFlag::Where('key', 'add-twitter-field')->first();
-
+        $feature_flag = FeatureFlag::where('key', 'add-twitter-field')->first();
         $example_controller = \App::make(FeatureFlagSettingsController::class);
         $data = $example_controller->update($request, $feature_flag->id);
 
-        $feature_flag = FeatureFlag::Where('key', 'add-twitter-field')->first();
+        $feature_flag = FeatureFlag::where('key', 'add-twitter-field')->first();
         $this->assertEquals($feature_flag->variants[0], 'on');
 
         $this->assertEquals($data->getSession()->get('message'), sprintf("Feature Flag Updated %d", $feature_flag->id));
@@ -154,12 +184,12 @@ class FeatureFlagSettingControllerTest extends TestCase
         $example_features = new AddExampleFeaturesTableSeeder();
         $example_features->run();
 
-        $feature_flag = FeatureFlag::Where('key', 'add-twitter-field')->first();
+        $feature_flag = FeatureFlag::where('key', 'add-twitter-field')->first();
 
         $example_controller = \App::make(FeatureFlagSettingsController::class);
         $data = $example_controller->destroy($feature_flag->id);
 
-        $feature_flag_count = FeatureFlag::Where('key', 'add-twitter-field')->count();
+        $feature_flag_count = FeatureFlag::where('key', 'add-twitter-field')->count();
 
         $this->assertEquals($data->getSession()->get('message'), sprintf("Feature Flag deleted %d", $feature_flag->id));
         $this->assertEquals($feature_flag_count, 0);
@@ -173,7 +203,7 @@ class FeatureFlagSettingControllerTest extends TestCase
         $example_controller = \App::make(FeatureFlagSettingsController::class);
         $data = $example_controller->destroy(null);
 
-        $feature_flag_count = FeatureFlag::Where('key', 'add-twitter-field')->count();
+        $feature_flag_count = FeatureFlag::where('key', 'add-twitter-field')->count();
 
         $this->assertEquals($data->getSession()->get('message'), "Could not find feature flag");
         $this->assertEquals($feature_flag_count, 1);
