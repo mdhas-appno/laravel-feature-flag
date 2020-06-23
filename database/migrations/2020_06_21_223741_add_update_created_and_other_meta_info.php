@@ -15,7 +15,6 @@ class AddUpdateCreatedAndOtherMetaInfo extends Migration
     {
         Schema::table("feature_flags", function (Blueprint $table) {
             $table->timestamps(0);
-            $table->unsignedInteger("usage_count")->nullable();
         });
     }
 

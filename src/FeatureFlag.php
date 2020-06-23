@@ -12,7 +12,7 @@ class FeatureFlag extends Model
     ];
 
     protected $fillable = [
-        "usage_count", "variants"
+        "variants"
     ];
 
 

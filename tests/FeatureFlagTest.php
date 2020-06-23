@@ -53,7 +53,7 @@ class FeatureFlagTest extends TestCase
     public function testTimeStamp()
     {
         $feature = factory(FeatureFlag::class)->create(
-            ['usage_count' => 2, "variants" => "off"]
+            ["variants" => "off"]
         );
 
         $this->assertNotNull($feature->created_at);
