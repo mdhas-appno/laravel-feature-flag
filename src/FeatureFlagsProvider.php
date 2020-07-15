@@ -2,11 +2,12 @@
 
 namespace FriendsOfCat\LaravelFeatureFlags;
 
-use FriendsOfCat\LaravelFeatureFlags\Console\Command\SyncFlags;
-use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Illuminate\Contracts\Auth\Access\Gate as GateContract;
+use Exception;
 use Illuminate\Support\Facades\Log;
 use Facades\FriendsOfCat\LaravelFeatureFlags\Feature;
+use Illuminate\Contracts\Auth\Access\Gate as GateContract;
+use FriendsOfCat\LaravelFeatureFlags\Console\Command\SyncFlags;
+use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 /**
  * Class FeatureFlagsProvider
@@ -115,9 +116,9 @@ class FeatureFlagsProvider extends ServiceProvider
     {
         $gate->define('feature-flag', function ($user, $flag_id) {
             try {
-                return Feature::isEnabled($flag_id);
-            } catch (\Exception $e) {
-                if (config("laravel-feature-flag.logging")) {
+                return Feature::isEnabled($flag_id, null, $user);
+            } catch (Exception $e) {
+                if (config('laravel-feature-flag.logging')) {
                     Log::info(
                         sprintf(
                             "FeatureFlagsProvider: error with feature flag %s. '%s'",
@@ -126,6 +127,7 @@ class FeatureFlagsProvider extends ServiceProvider
                         )
                     );
                 }
+
                 // Defaults to false in case of error.
                 return false;
             }
