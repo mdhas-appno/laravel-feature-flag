@@ -56,6 +56,40 @@ class FeatureTest extends TestCase
      * @test
      * @covers ::isEnabled
      */
+    public function testIsEnabledPassingKeyAndUser()
+    {
+        $user = factory(FeatureFlagUser::class)->create();
+
+        factory(FeatureFlag::class)->create([
+            'key' => 'feature_1',
+            'variants' => 'on'
+        ]);
+
+        factory(FeatureFlag::class)->create([
+            'key' => 'feature_2',
+            'variants' => 'off'
+        ]);
+
+        factory(FeatureFlag::class)->create([
+            'key' => 'feature_3',
+            'variants' => ['users' => [$user->email]],
+        ]);
+
+        factory(FeatureFlag::class)->create([
+            'key' => 'feature_3',
+            'variants' => ['users' => []],
+        ]);
+
+        $this->assertTrue((new Feature)->isEnabled('feature_1', null, $user));
+        $this->assertFalse((new Feature)->isEnabled('feature_2', null, $user));
+        $this->assertTrue((new Feature)->isEnabled('feature_3', null, $user));
+        $this->assertFalse((new Feature)->isEnabled('feature_4', null, $user));
+    }
+
+    /**
+     * @test
+     * @covers ::isEnabled
+     */
     public function testIsEnabledPassingVariant()
     {
         $user = factory(FeatureFlagUser::class)->create();

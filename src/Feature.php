@@ -26,16 +26,17 @@ class Feature
      *
      * @param string $featureKey
      * @param mixed $variant (optional)
+     * @param \Illuminate\Contracts\Auth\Access\Authorizable $user (optional)
      * @return bool
      */
-    public function isEnabled($featureKey, $variant = null)
+    public function isEnabled($featureKey, $variant = null, $user = null)
     {
         if (! $variant) {
             $variant = $this->getConfig($featureKey);
         }
 
         if ($variant != self::ON and $variant != self::OFF) {
-            return $this->isUserEnabled($variant);
+            return $this->isUserEnabled($variant, $user);
         }
 
         return $variant == self::ON;
@@ -62,11 +63,12 @@ class Feature
 
     /**
      * @param $feature_variant
+     * @param \Illuminate\Contracts\Auth\Access\Authorizable $user (optional)
      * @return bool
      */
-    protected function isUserEnabled($feature_variant)
+    protected function isUserEnabled($feature_variant, $user = null)
     {
-        if ($user_email = $this->getUserEmail()) {
+        if ($user_email = $this->getUserEmail($user)) {
             if (empty($feature_variant['users'])) {
                 return false;
             }
@@ -83,11 +85,15 @@ class Feature
 
 
     /**
-     * @param string|int $userId
+     * @param \Illuminate\Contracts\Auth\Access\Authorizable $user (optional)
      * @return string
      */
-    public function getUserEmail()
+    public function getUserEmail($user)
     {
+        if ($user && $user->email) {
+            return $user->email;
+        }
+
         if (Auth::guest()) {
             return false;
         }
