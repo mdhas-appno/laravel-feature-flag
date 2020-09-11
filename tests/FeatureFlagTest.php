@@ -111,4 +111,49 @@ class FeatureFlagTest extends TestCase
         $this->assertFalse($this->app->get(Gate::class)->allows('feature-flag', 'testing'));
     }
 
+    public function testOnForUserRole()
+    {
+        $this->user = factory(FeatureFlagUser::class)->create(['email' => 'foo2@gmail.com']);
+        $this->user->setRawAttributes(['roles' => ['admin', 'editor']]);
+
+        $this->be($this->user);
+
+        factory(FeatureFlag::class)->create(
+            [
+                'key' => 'testing',
+                'variants' => [
+                    'roles' => [
+                        'admin'
+                    ]
+                ]
+            ]
+        );
+
+        $this->registerFeatureFlags();
+
+        $this->assertTrue($this->app->get(Gate::class)->allows('feature-flag', 'testing'));
+    }
+
+    public function testOffForUserRole()
+    {
+        $this->user = factory(FeatureFlagUser::class)->create(['email' => 'foo2@gmail.com']);
+        $this->user->setRawAttributes(['roles' => ['editor']]);
+
+        $this->be($this->user);
+
+        factory(FeatureFlag::class)->create(
+            [
+                'key' => 'testing',
+                'variants' => [
+                    'roles' => [
+                        'admin', 'manager'
+                    ]
+                ]
+            ]
+        );
+
+        $this->registerFeatureFlags();
+
+        $this->assertFalse($this->app->get(Gate::class)->allows('feature-flag', 'testing'));
+    }
 }

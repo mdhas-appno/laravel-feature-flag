@@ -21,6 +21,12 @@
             <pre>{ "users": [ "foo@gmail.com" ] }</pre>
             or
             <br>
+            <pre>{ "roles": [ "developer" ] }</pre>
+            or
+            <br>
+            <pre>{ "roles": [ "developer" ], "users": [ "foo@bar.com" ] }</pre>
+            or
+            <br>
             <pre>"off"</pre>
         </div>
     </div>

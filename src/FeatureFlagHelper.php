@@ -46,6 +46,10 @@ trait FeatureFlagHelper
             $features[$value['key']]['users'] = $value['variants']['users'];
         }
 
+        if (isset($value['variants']['roles'])) {
+            $features[$value['key']]['roles'] = $value['variants']['roles'];
+        }
+
         return $features;
     }
 

@@ -129,6 +129,29 @@ if(\FriendsOfCat\LaravelFeatureFlags\Feature::exists('see-twitter-field'))
 }
 ~~~
 
+### Enable for User Roles
+You can enable a feature flag for specific user roles, by using the **roles** variant in the configuration form
+
+i.e.
+
+~~~
+{ "roles": ["admin", "dev"]}
+~~~
+
+If you don't have a roles property in your User model, you just need to implement the **FeatureFlagsUserRoles** Interface and the following method
+
+~~~
+use FriendsOfCat\LaravelFeatureFlags\FeatureFlagsUserRoles;
+
+class User extends Authenticatable implements FeatureFlagsUserRoles
+{
+    public function getRolesForFeatureFlags(): ?array
+    {
+
+        // return user roles array
+    }
+}
+~~~
 
 ## Usage Non Auth
 
