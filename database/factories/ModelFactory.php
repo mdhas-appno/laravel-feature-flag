@@ -14,6 +14,7 @@ $factory->define(\FriendsOfCat\LaravelFeatureFlags\FeatureFlagUser::class, funct
     return [
         'name' => $faker->word,
         'email' => $faker->email,
-        'password' => bcrypt(str_random(25))
+        'password' => bcrypt(str_random(25)),
+        'roles' => "['admin']"
     ];
 });

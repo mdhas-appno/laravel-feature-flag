@@ -2,8 +2,10 @@
 
 namespace FriendsOfCat\LaravelFeatureFlags;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use FriendsOfCat\LaravelFeatureFlags\FeatureFlagsEnabler;
 
 class Feature
 {
@@ -48,7 +50,7 @@ class Feature
         }
 
         if ($variant != self::ON and $variant != self::OFF) {
-            return $this->isUserEnabled($variant, $user);
+            return $this->isUserEnabled($variant, $user) || $this->isRoleEnabled($variant, $user);
         }
 
         return $variant == self::ON;
@@ -95,7 +97,6 @@ class Feature
         return false;
     }
 
-
     /**
      * @param \Illuminate\Contracts\Auth\Access\Authorizable $user (optional)
      * @return string
@@ -111,5 +112,37 @@ class Feature
         }
 
         return Auth::user()->email;
+    }
+
+    private function getUserRoles($user)
+    {
+        return ($user && $user->roles) ? $user->roles : false;
+    }
+
+    public function isRoleEnabled($feature_variant, $user = null)
+    {
+        $fieldName = 'roles';
+
+        if (empty($feature_variant[$fieldName])) {
+            return false;
+        }
+
+        $user = $user ?? Auth::user();
+        if ($user_roles =
+            ($user instanceof FeatureFlagsEnabler)
+                ? $user->getFieldValueForFeatureFlags($fieldName)
+                : $this->getUserRoles($user)
+        ) {
+            $filtered = Arr::where(
+                array_map('strtolower', $user_roles),
+                function ($value, $key) use ($feature_variant, $fieldName) {
+                    return in_array($value, $feature_variant[$fieldName], true);
+                }
+            );
+
+            return ! empty($filtered);
+        }
+
+        return false;
     }
 }
