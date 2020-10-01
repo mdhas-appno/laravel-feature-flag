@@ -138,18 +138,15 @@ i.e.
 { "roles": ["admin", "dev"]}
 ~~~
 
-If you don't have a roles property in your User model, you just need to implement the **FeatureFlagsUserRoles** Interface and the following method
+If you don't have a roles property in your User model, you just need to implement the **FeatureFlagsEnabler** Interface and use **FeatureFlagUserRoleTrait**
 
 ~~~
-use FriendsOfCat\LaravelFeatureFlags\FeatureFlagsUserRoles;
+use FriendsOfCat\LaravelFeatureFlags\FeatureFlagsEnabler;
+use FriendsOfCat\LaravelFeatureFlags\FeatureFlagUserRoleTrait;
 
 class User extends Authenticatable implements FeatureFlagsUserRoles
 {
-    public function getRolesForFeatureFlags(): ?array
-    {
-
-        // return user roles array
-    }
+    use AuthenticableTrait, FeatureFlagUserRoleTrait;
 }
 ~~~
 
