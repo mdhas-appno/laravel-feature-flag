@@ -49,7 +49,7 @@ jobs:
         uses: chindit/actions-phpcs@master
         with:
           cli: "--standard=PSR12"
-          dir: app/
+          dir: src/
 
       - name: Test with phpunit
         run: XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-text --coverage-clover clover.xml
