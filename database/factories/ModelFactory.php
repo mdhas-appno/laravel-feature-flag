@@ -1,9 +1,10 @@
 <?php
 
+use Illuminate\Support\Str;
 
 $factory->define(\FriendsOfCat\LaravelFeatureFlags\FeatureFlag::class, function ($faker) {
     return [
-        'key' => str_random(3),
+        'key' => Str::random(3),
         'variants' => []
     ];
 });
@@ -14,7 +15,7 @@ $factory->define(\FriendsOfCat\LaravelFeatureFlags\FeatureFlagUser::class, funct
     return [
         'name' => $faker->word,
         'email' => $faker->email,
-        'password' => bcrypt(str_random(25)),
+        'password' => bcrypt(Str::random(25)),
         'roles' => "['admin']"
     ];
 });
