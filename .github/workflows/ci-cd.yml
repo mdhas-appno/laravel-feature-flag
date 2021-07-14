@@ -52,9 +52,7 @@ jobs:
           dir: src/
 
       - name: Test with phpunit
-        run: XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-text --coverage-clover clover.xml
-        env:
-          DB_PORT: ${{ job.services.mysql.ports['3306'] }}
+        run: XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-text
 
       - name: Do we pass the coverage amount
-        run: vendor/bin/coverage-check clover.xml 60
+        run: composer coverage
