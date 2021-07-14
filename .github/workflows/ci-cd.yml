@@ -48,7 +48,7 @@ jobs:
       - name: PHP Code Style (phpcs)
         uses: chindit/actions-phpcs@master
         with:
-          cli: "--standard=PSR12"
+          cli: "--standard=PSR2"
           dir: src/
 
       - name: Test with phpunit
