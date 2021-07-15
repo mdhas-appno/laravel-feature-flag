@@ -1,8 +1,6 @@
 # Feature Flags In Laravel
 
-[![Build Status](https://travis-ci.org/friendsofcat/laravel-feature-flag.svg?branch=master)](https://travis-ci.org/friendsofcat/laravel-feature-flag)
-
-[![Coverage Status](https://coveralls.io/repos/github/friendsofcat/laravel-feature-flag/badge.svg)](https://coveralls.io/github/friendsofcat/laravel-feature-flag)
+[![CI-CD](https://github.com/friendsofcat/laravel-feature-flag/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/friendsofcat/laravel-feature-flag/actions/workflows/ci-cd.yml)
 
   * [Overview](#overview)
   * [Installing](#installing)
