@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Illuminate\Support\Str;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Foundation\Testing\WithFaker;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlag;
@@ -21,11 +22,11 @@ class FeatureFlagsEnablerTest extends TestCase
         $user = new UserWithFeatureFlagsEnablerInterface([
             'name' => $this->faker->word,
             'email' => $this->faker->email,
-            'password' => bcrypt(str_random(25)),
+            'password' => bcrypt(Str::random(25)),
             'roles' => json_encode($userRoles)
         ]);
         $user->save();
-        
+
         $this->be($user);
 
         factory(FeatureFlag::class)->create(
@@ -47,15 +48,15 @@ class FeatureFlagsEnablerTest extends TestCase
     public function validData()
     {
         return [
-                [
-                    'admin'
-                ],
-                [
-                    ['admin', 'developer']
-                ],
-                [
-                    'developer'
-                ]
+            [
+                'admin'
+            ],
+            [
+                ['admin', 'developer']
+            ],
+            [
+                'developer'
+            ]
         ];
     }
 }

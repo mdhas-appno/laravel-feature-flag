@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class SettingsPageTest extends TestCase
 {
@@ -14,11 +15,11 @@ class SettingsPageTest extends TestCase
 
     private $user;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->markTestSkipped(
             "We need to figure out how to do these UI tests outside of laravel OR
-        during the travis build setup a laravel up to run this in. 
+        during the travis build setup a laravel up to run this in.
         More later https://github.com/orchestral/testbench/blob/3.5/README.md"
         );
         parent::setUp();
@@ -33,7 +34,7 @@ class SettingsPageTest extends TestCase
         factory(\FriendsOfCat\LaravelFeatureFlags\FeatureFlag::class)->create(
             [
                 'key' => 'add-twitter-field',
-                'variants' => [ 'users' => [$this->user->email]]
+                'variants' => ['users' => [$this->user->email]]
             ]
         );
 
@@ -43,16 +44,16 @@ class SettingsPageTest extends TestCase
 
     public function testCanEditSettings()
     {
-        $key = str_random();
+        $key = Str::random();
 
         $flag = factory(\FriendsOfCat\LaravelFeatureFlags\FeatureFlag::class)->create(
             [
                 'key' => $key,
-                'variants' => [ 'users' => [$this->user->email]]
+                'variants' => ['users' => [$this->user->email]]
             ]
         );
 
-        $variant = str_random();
+        $variant = Str::random();
 
         $this->actingAs($this->user)->visit('admin/feature_flags/' . $flag->id . '/edit')
             ->type("\"$variant\"", 'variants')
@@ -65,8 +66,8 @@ class SettingsPageTest extends TestCase
     {
 
 
-        $key = str_random();
-        $variant = str_random();
+        $key = Str::random();
+        $variant = Str::random();
 
         $this->actingAs($this->user)->visit('admin/feature_flags/create')
             ->type($key, 'key')

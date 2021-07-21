@@ -2,6 +2,7 @@
 
 namespace FriendsOfCat\LaravelFeatureFlags;
 
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
@@ -35,14 +36,23 @@ class FeatureFlagSettingsController extends Controller
     public function import(Request $request, ExportImportRepository $repo)
     {
         try {
-            $repo->import(json_decode($request->features, true));
-
+            $decoded = $this->parseIncomingFeaturePayload($request->features);
+            $repo->import($decoded);
             return redirect()->route('laravel-feature-flag.index')->withMessage("Created and or Updated Features");
         } catch (\Exception $e) {
             \Log::error("Error importing feature flags");
             \Log::error($e);
             return redirect()->route('laravel-feature-flag.index')->withMessage("Could not import feature flags");
         }
+    }
+
+    protected function parseIncomingFeaturePayload($features)
+    {
+        if (is_array($features)) {
+            throw new \Exception("Feature came in as array");
+        }
+
+        return json_decode($features, true);
     }
 
     public function store(Request $request)
