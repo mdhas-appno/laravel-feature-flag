@@ -24,7 +24,10 @@
             <pre>{ "roles": [ "developer" ] }</pre>
             or
             <br>
-            <pre>{ "roles": [ "developer" ], "users": [ "foo@bar.com" ] }</pre>
+            <pre>{ "teams": [ "Team 1" ] }</pre>
+            or
+            <br>
+            <pre>{ "roles": [ "developer" ], "users": [ "foo@bar.com" ], "teams": [ "Team 1" ] }</pre>
             or
             <br>
             <pre>"off"</pre>
