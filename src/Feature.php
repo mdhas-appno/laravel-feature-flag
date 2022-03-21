@@ -129,7 +129,7 @@ class Feature
         }
 
         return ($user && $user->teams)
-            ? $user->teams 
+            ? $user->teams
             : false;
     }
 
