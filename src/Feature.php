@@ -50,7 +50,9 @@ class Feature
         }
 
         if ($variant != self::ON and $variant != self::OFF) {
-            return $this->isUserEnabled($variant, $user) || $this->isRoleEnabled($variant, $user);
+            return $this->isUserEnabled($variant, $user)
+                || $this->isRoleEnabled($variant, $user)
+                || $this->isTeamEnabled($variant, $user);
         }
 
         return $variant == self::ON;
@@ -119,6 +121,11 @@ class Feature
         return ($user && $user->roles) ? $user->roles : false;
     }
 
+    private function getUserTeams($user)
+    {
+        return ($user && $user->teams) ? $user->teams : false;
+    }
+
     public function isRoleEnabled($feature_variant, $user = null)
     {
         $fieldName = 'roles';
@@ -137,6 +144,34 @@ class Feature
                 array_map('strtolower', $user_roles),
                 function ($value, $key) use ($feature_variant, $fieldName) {
                     return in_array($value, $feature_variant[$fieldName], true);
+                }
+            );
+
+            return ! empty($filtered);
+        }
+
+        return false;
+    }
+
+    public function isTeamEnabled($feature_variant, $user = null)
+    {
+        $fieldName = 'teams';
+
+        if (empty($feature_variant[$fieldName])) {
+            return false;
+        }
+
+        $user = $user ?? Auth::user();
+
+        if ($user_teams=
+            ($user instanceof FeatureFlagsEnabler)
+                ? $user->getFieldValueForFeatureFlags($fieldName)
+                : $this->getUserTeams($user)
+        ) {
+            $filtered = Arr::where(
+                $user_teams,
+                function ($value, $key) use ($feature_variant, $fieldName) {
+                    return in_array($value, $feature_variant[$fieldName]);
                 }
             );
 

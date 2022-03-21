@@ -148,6 +148,27 @@ class User extends Authenticatable implements FeatureFlagsUserRoles
 }
 ~~~
 
+### Enable for User Teams
+You can enable a feature flag for specific user teams, by using the **teams** variant in the configuration form
+
+i.e.
+
+~~~
+{ "teams": ["Team 1", "Team 2"]}
+~~~
+
+If you don't have a teams property in your User model, you just need to implement the **FeatureFlagsEnabler** Interface and use **FeatureFlagUserRoleTrait**
+
+~~~
+use FriendsOfCat\LaravelFeatureFlags\FeatureFlagsEnabler;
+use FriendsOfCat\LaravelFeatureFlags\FeatureFlagUserRoleTrait;
+
+class User extends Authenticatable implements FeatureFlagsUserRoles
+{
+    use AuthenticableTrait, FeatureFlagUserRoleTrait;
+}
+~~~
+
 ## Usage Non Auth
 
 Sometimes you are not using this at the Auth user level, it is rare for most of our use cases but for non authenticated situations you can just use this

@@ -10,7 +10,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class FeatureFlagTest extends TestCase
 {
-    use RefreshDatabase, FeatureFlagHelper;
+    use RefreshDatabase;
+    use FeatureFlagHelper;
 
     protected $user;
 
@@ -147,6 +148,53 @@ class FeatureFlagTest extends TestCase
                 'variants' => [
                     'roles' => [
                         'admin', 'manager'
+                    ]
+                ]
+            ]
+        );
+
+        $this->registerFeatureFlags();
+
+        $this->assertFalse($this->app->get(Gate::class)->allows('feature-flag', 'testing'));
+    }
+
+    public function testOnForUserTeam()
+    {
+        $this->user = factory(FeatureFlagUser::class)->create(['email' => 'foo5@gmail.com']);
+        $this->user->setRawAttributes(['teams' => ['Team 1']]);
+
+        $this->be($this->user);
+
+        factory(FeatureFlag::class)->create(
+            [
+                'key' => 'testing',
+                'variants' => [
+                    'teams' => [
+                        'Team 1',
+                        'Team 2'
+                    ]
+                ]
+            ]
+        );
+
+        $this->registerFeatureFlags();
+
+        $this->assertTrue($this->app->get(Gate::class)->allows('feature-flag', 'testing'));
+    }
+
+    public function testOffForUserTeam()
+    {
+        $this->user = factory(FeatureFlagUser::class)->create(['email' => 'foo5@gmail.com']);
+        $this->user->setRawAttributes(['teams' => ['Team 1']]);
+
+        $this->be($this->user);
+
+        factory(FeatureFlag::class)->create(
+            [
+                'key' => 'testing',
+                'variants' => [
+                    'teams' => [
+                        'Team 3'
                     ]
                 ]
             ]

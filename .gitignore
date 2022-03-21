@@ -3,3 +3,4 @@ vendor
 tests/logs
 build
 composer.lock
+.phpunit.result.cache
