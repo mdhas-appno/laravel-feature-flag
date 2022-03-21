@@ -42,12 +42,10 @@ trait FeatureFlagHelper
     {
         $features[$value['key']] = $this->getAndSetValue($value);
 
-        if (isset($value['variants']['users'])) {
-            $features[$value['key']]['users'] = $value['variants']['users'];
-        }
-
-        if (isset($value['variants']['roles'])) {
-            $features[$value['key']]['roles'] = $value['variants']['roles'];
+        foreach (['users', 'roles', 'teams'] as $variant) {
+            if (isset($value['variants'][$variant])) {
+                $features[$value['key']][$variant] = $value['variants'][$variant];
+            }
         }
 
         return $features;

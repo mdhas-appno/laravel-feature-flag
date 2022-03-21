@@ -10,10 +10,11 @@ use Illuminate\Auth\Authenticatable as AuthenticableTrait;
 
 class UserWithFeatureFlagsEnablerInterface extends Model implements Authenticatable, FeatureFlagsEnabler
 {
-    use AuthenticableTrait, FeatureFlagUserRoleTrait;
+    use AuthenticableTrait;
+    use FeatureFlagUserRoleTrait;
 
     protected $table = 'users';
-    protected $fillable = ['name', 'email', 'password', 'roles'];
+    protected $fillable = ['name', 'email', 'password', 'roles', 'teams'];
 
     public function __construct(array $attributes = [ ])
     {
