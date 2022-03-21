@@ -163,7 +163,12 @@ class FeatureFlagTest extends TestCase
         $this->user = factory(FeatureFlagUser::class)->create(['email' => 'foo5@gmail.com']);
         $this->user->setRawAttributes(['teams' => ['Team 1']]);
 
-        $this->be($this->user);
+        $this->user2 = factory(FeatureFlagUser::class)->create(['email' => 'foo6@gmail.com']);
+        $this->user2->setRawAttributes([
+            'teams' => collect([
+                ['name' => 'Team 1']
+            ])
+        ]);
 
         factory(FeatureFlag::class)->create(
             [
@@ -178,7 +183,10 @@ class FeatureFlagTest extends TestCase
         );
 
         $this->registerFeatureFlags();
+        $this->be($this->user);
+        $this->assertTrue($this->app->get(Gate::class)->allows('feature-flag', 'testing'));
 
+        $this->be($this->user2);
         $this->assertTrue($this->app->get(Gate::class)->allows('feature-flag', 'testing'));
     }
 

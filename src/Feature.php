@@ -3,6 +3,7 @@
 namespace FriendsOfCat\LaravelFeatureFlags;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlagsEnabler;
@@ -123,7 +124,13 @@ class Feature
 
     private function getUserTeams($user)
     {
-        return ($user && $user->teams) ? $user->teams : false;
+        if ($user && $user->teams instanceof Collection) {
+            return $user->teams->pluck('name')->toArray();
+        }
+
+        return ($user && $user->teams)
+            ? $user->teams
+            : false;
     }
 
     public function isRoleEnabled($feature_variant, $user = null)
