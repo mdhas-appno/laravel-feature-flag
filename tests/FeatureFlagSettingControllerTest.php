@@ -1,28 +1,25 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: luiz.albertoni
- * Date: 11/09/2018
- * Time: 15:55
- */
-
 namespace Tests;
 
-use FriendsOfCat\LaravelFeatureFlags\AddExampleFeaturesTableSeeder;
-use FriendsOfCat\LaravelFeatureFlags\ExportImportRepository;
-use FriendsOfCat\LaravelFeatureFlags\FeatureFlag;
-use FriendsOfCat\LaravelFeatureFlags\FeatureFlagSettingsController;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Request;
+use Illuminate\Support\MessageBag;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\ViewErrorBag;
+use FriendsOfCat\LaravelFeatureFlags\FeatureFlag;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use FriendsOfCat\LaravelFeatureFlags\ExportImportRepository;
+use FriendsOfCat\LaravelFeatureFlags\AddExampleFeaturesTableSeeder;
+use FriendsOfCat\LaravelFeatureFlags\FeatureFlagSettingsController;
+use FriendsOfCat\LaravelFeatureFlags\Exceptions\InvalidJsonException;
 
 class FeatureFlagSettingControllerTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     public function testShouldSeeNewSettings()
     {
-        $example_controller = \App::make(FeatureFlagSettingsController::class);
+        $example_controller = App::make(FeatureFlagSettingsController::class);
         $data = $example_controller->create()->getData();
         $flag = $data['flag'];
         $this->assertNotEmpty($flag);
@@ -33,7 +30,7 @@ class FeatureFlagSettingControllerTest extends TestCase
         $example_features = new AddExampleFeaturesTableSeeder();
         $example_features->run();
 
-        $example_controller = \App::make(FeatureFlagSettingsController::class);
+        $example_controller = App::make(FeatureFlagSettingsController::class);
         $repo = new ExportImportRepository();
         $data = $example_controller->getSettings($repo)->getData();
         $exports = $data['exports'];
@@ -52,7 +49,7 @@ class FeatureFlagSettingControllerTest extends TestCase
         $request->merge(['features' => $feature_flag]);
 
 
-        $example_controller = \App::make(FeatureFlagSettingsController::class);
+        $example_controller = App::make(FeatureFlagSettingsController::class);
         $repo = new ExportImportRepository();
         $data = $example_controller->import($request, $repo);
         $this->assertEquals($data->getSession()->get('message'), 'Created and or Updated Features');
@@ -70,7 +67,7 @@ class FeatureFlagSettingControllerTest extends TestCase
         $request->merge(['features' => []]);
 
 
-        $example_controller = \App::make(FeatureFlagSettingsController::class);
+        $example_controller = App::make(FeatureFlagSettingsController::class);
         $repo = new ExportImportRepository();
         $data = $example_controller->import($request, $repo);
         $this->assertEquals($data->getSession()->get('message'), 'Could not import feature flags');
@@ -81,7 +78,7 @@ class FeatureFlagSettingControllerTest extends TestCase
         $request = new Request();
         $request->merge(['key' => 'test_A', 'variants' => '"on"']);
 
-        $example_controller = \App::make(FeatureFlagSettingsController::class);
+        $example_controller = App::make(FeatureFlagSettingsController::class);
         $data = $example_controller->store($request);
 
         $flag = FeatureFlag::first();
@@ -95,7 +92,7 @@ class FeatureFlagSettingControllerTest extends TestCase
         $request = new Request();
         $request->merge(['key' => 'test_A', 'variants' => '\'on\'']);
 
-        $example_controller = \App::make(FeatureFlagSettingsController::class);
+        $example_controller = App::make(FeatureFlagSettingsController::class);
         $data = $example_controller->store($request);
 
         $flag = FeatureFlag::first();
@@ -110,7 +107,7 @@ class FeatureFlagSettingControllerTest extends TestCase
         $request->merge(['key' => 'test_A', 'variants' => 'on']);
 
 
-        $example_controller = \App::make(FeatureFlagSettingsController::class);
+        $example_controller = App::make(FeatureFlagSettingsController::class);
         $data = $example_controller->store($request);
         $this->assertEquals($data->getSession()->get('message'), 'Created Feature');
     }
@@ -121,7 +118,7 @@ class FeatureFlagSettingControllerTest extends TestCase
         $request->merge(['key' => null, 'variants' => null]);
 
 
-        $example_controller = \App::make(FeatureFlagSettingsController::class);
+        $example_controller = App::make(FeatureFlagSettingsController::class);
         $data = $example_controller->store($request);
         $this->assertEquals($data->getSession()->get('message'), 'Could not find feature flag');
     }
@@ -136,7 +133,7 @@ class FeatureFlagSettingControllerTest extends TestCase
 
         $feature_flag = FeatureFlag::where('key', 'add-twitter-field')->first();
 
-        $example_controller = \App::make(FeatureFlagSettingsController::class);
+        $example_controller = App::make(FeatureFlagSettingsController::class);
         $data = $example_controller->edit($feature_flag->id)->getData();
         $flag = $data['flag'];
         $this->assertNotEmpty($flag);
@@ -145,7 +142,7 @@ class FeatureFlagSettingControllerTest extends TestCase
 
     public function testShouldEditFail()
     {
-        $example_controller = \App::make(FeatureFlagSettingsController::class);
+        $example_controller = App::make(FeatureFlagSettingsController::class);
         $data = $example_controller->edit(1001);
         $this->assertEquals($data->getSession()->get('message'), 'Could not find feature flag');
     }
@@ -160,7 +157,7 @@ class FeatureFlagSettingControllerTest extends TestCase
         $request->merge(['variants' => '["on"]']);
         $feature_flag = FeatureFlag::where('key', 'add-twitter-field')->first();
 
-        $example_controller = \App::make(FeatureFlagSettingsController::class);
+        $example_controller = App::make(FeatureFlagSettingsController::class);
         $data = $example_controller->update($request, $feature_flag->id);
 
         $feature_flag = FeatureFlag::where('key', 'add-twitter-field')->first();
@@ -174,10 +171,28 @@ class FeatureFlagSettingControllerTest extends TestCase
     {
         $request = new Request();
 
-        $example_controller = \App::make(FeatureFlagSettingsController::class);
+        $example_controller = App::make(FeatureFlagSettingsController::class);
         $data = $example_controller->update($request, null);
 
         $this->assertEquals($data->getSession()->get('message'), "Could not find feature flag");
+    }
+
+    public function testUpdateShouldThrowInvalidJsonError()
+    {
+        $ff = factory(FeatureFlag::class)->create();
+
+        $request = new Request([
+            'key' => 'invalid',
+            'variants' => 'my-invalid-json-string/'
+        ]);
+
+        $example_controller = App::make(FeatureFlagSettingsController::class);
+        $data = $example_controller->update($request, $ff->id);
+
+        $errorBag = new ViewErrorBag();
+        $errorBag->put('default', new MessageBag(["Invalid JSON format."]));
+
+        $this->assertEquals($data->getSession()->get('errors'), $errorBag);
     }
 
     public function testShouldDestroy()
@@ -187,7 +202,7 @@ class FeatureFlagSettingControllerTest extends TestCase
 
         $feature_flag = FeatureFlag::where('key', 'add-twitter-field')->first();
 
-        $example_controller = \App::make(FeatureFlagSettingsController::class);
+        $example_controller = App::make(FeatureFlagSettingsController::class);
         $data = $example_controller->destroy($feature_flag->id);
 
         $feature_flag_count = FeatureFlag::where('key', 'add-twitter-field')->count();
@@ -201,7 +216,7 @@ class FeatureFlagSettingControllerTest extends TestCase
         $example_features = new AddExampleFeaturesTableSeeder();
         $example_features->run();
 
-        $example_controller = \App::make(FeatureFlagSettingsController::class);
+        $example_controller = App::make(FeatureFlagSettingsController::class);
         $data = $example_controller->destroy(null);
 
         $feature_flag_count = FeatureFlag::where('key', 'add-twitter-field')->count();

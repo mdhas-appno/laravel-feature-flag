@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Illuminate\Support\Facades\View;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlagsProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
@@ -24,7 +25,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
             return view("testing");
         })->name('featured');
 
-        \View::addLocation(__DIR__ . '/../views');
+        View::addLocation(__DIR__ . '/../views');
 
         $this->loadMigrationsFrom(__DIR__ . '/migrations');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');

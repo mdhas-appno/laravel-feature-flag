@@ -12,7 +12,9 @@ use Tests\fixtures\UserWithFeatureFlagsEnablerInterface;
 
 class FeatureFlagsEnablerTest extends TestCase
 {
-    use RefreshDatabase, WithFaker, FeatureFlagHelper;
+    use FeatureFlagHelper;
+    use RefreshDatabase;
+    use WithFaker;
 
     /**
      * @dataProvider validData

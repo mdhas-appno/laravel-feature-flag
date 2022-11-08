@@ -2,24 +2,25 @@
 
 namespace Tests;
 
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use FriendsOfCat\LaravelFeatureFlags\FeatureFlag;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlagHelper;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\DB;
 
 class FeatureFlagHelperTest extends TestCase
 {
-    use DatabaseMigrations, FeatureFlagHelper;
+    use FeatureFlagHelper;
+    use RefreshDatabase;
 
 
     public function testCacheSettings()
     {
-        \Cache::shouldReceive("rememberForever")->twice();
+        Cache::shouldReceive("rememberForever")->twice();
 
-        \Cache::shouldReceive("forget")->twice();
+        Cache::shouldReceive("forget")->twice();
 
-        $feature = factory(\FriendsOfCat\LaravelFeatureFlags\FeatureFlag::class)->create(
+        $feature = factory(FeatureFlag::class)->create(
             [
                 'key' => 'foo',
                 'variants' => ["on"]
@@ -28,11 +29,11 @@ class FeatureFlagHelperTest extends TestCase
 
         $this->registerFeatureFlags();
 
-        \Auth::shouldReceive('guest')->andReturn(false);
+        Auth::shouldReceive('guest')->andReturn(false);
 
-        \Auth::shouldReceive('user')->andReturn((object) ["id" => 1]);
+        Auth::shouldReceive('user')->andReturn((object) ["id" => 1]);
 
-        $feature = factory(\FriendsOfCat\LaravelFeatureFlags\FeatureFlag::class)->create(
+        $feature = factory(FeatureFlag::class)->create(
             [
                 'key' => 'bar',
                 'variants' => ["on"]

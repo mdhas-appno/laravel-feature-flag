@@ -5,6 +5,9 @@ namespace FriendsOfCat\LaravelFeatureFlags;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
+use FriendsOfCat\LaravelFeatureFlags\Exceptions\InvalidJsonException;
 
 class FeatureFlagSettingsController extends Controller
 {
@@ -18,9 +21,9 @@ class FeatureFlagSettingsController extends Controller
             $token = csrf_token();
             $exports = $repo->export();
             return view('laravel-feature-flag::settings', compact('settings', 'token', 'exports'));
-        } catch (\Exception $e) {
-            \Log::error("Error getting settings");
-            \Log::error($e);
+        } catch (Exception $e) {
+            Log::error("Error getting settings");
+            Log::error($e);
 
             return redirect("/")->withMessage("Error visiting Settings page");
         }
@@ -40,8 +43,8 @@ class FeatureFlagSettingsController extends Controller
             $repo->import($decoded);
             return redirect()->route('laravel-feature-flag.index')->withMessage("Created and or Updated Features");
         } catch (\Exception $e) {
-            \Log::error("Error importing feature flags");
-            \Log::error($e);
+            Log::error("Error importing feature flags");
+            Log::error($e);
             return redirect()->route('laravel-feature-flag.index')->withMessage("Could not import feature flags");
         }
     }
@@ -49,7 +52,7 @@ class FeatureFlagSettingsController extends Controller
     protected function parseIncomingFeaturePayload($features)
     {
         if (is_array($features)) {
-            throw new \Exception("Feature came in as array");
+            throw new Exception("Feature came in as array");
         }
 
         return json_decode($features, true);
@@ -73,8 +76,12 @@ class FeatureFlagSettingsController extends Controller
         try {
             $flag = FeatureFlag::findOrFail($id);
 
+            if (Session::has('variants')) {
+                $flag->variants = Session::get('variants');
+            }
+
             return view('laravel-feature-flag::edit', compact('flag'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return redirect()->route('laravel-feature-flag.index')->withMessage("Could not find feature flag");
         }
     }
@@ -84,13 +91,21 @@ class FeatureFlagSettingsController extends Controller
         try {
             $flag = FeatureFlag::findOrFail($id);
 
+            $variants = json_decode($request->input('variants'), true);
+            if (! $variants) {
+                throw new InvalidJsonException();
+            }
+
             $flag->variants = ($request->input('variants')) ? json_decode($request->input('variants'), true) : null;
             $flag->save();
 
             return redirect()->route(
                 'laravel-feature-flag.index'
             )->withMessage(sprintf("Feature Flag Updated %d", $id));
-        } catch (\Exception $e) {
+        } catch (InvalidJsonException $e) {
+            return redirect()->back()->withErrors("Invalid JSON format.")
+                ->withVariants($request->input('variants'));
+        } catch (Exception $e) {
             return redirect()->route('laravel-feature-flag.index')->withMessage("Could not find feature flag");
         }
     }
@@ -105,7 +120,7 @@ class FeatureFlagSettingsController extends Controller
             return redirect()->route(
                 'laravel-feature-flag.index'
             )->withMessage(sprintf("Feature Flag deleted %d", $id));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return redirect()->route('laravel-feature-flag.index')
                 ->withMessage("Could not find feature flag");
         }

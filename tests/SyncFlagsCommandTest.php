@@ -2,22 +2,20 @@
 
 namespace Tests;
 
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use FriendsOfCat\LaravelFeatureFlags\FeatureFlag;
 use Illuminate\Support\Facades\Artisan;
+use FriendsOfCat\LaravelFeatureFlags\FeatureFlag;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class SyncFlagsCommandTest extends TestCase
 {
-    use DatabaseMigrations;
+    use RefreshDatabase;
 
     public function testShouldSyncFeatureFlags()
     {
 
-        factory(FeatureFlag::class, 2)->create(
-            [
-                'variants' => 'on',
-            ]
-        );
+        factory(FeatureFlag::class, 2)->create([
+            'variants' => 'on',
+        ]);
 
         $sync_flags = [
             'new_flag' => 'off',
@@ -39,12 +37,10 @@ class SyncFlagsCommandTest extends TestCase
     public function testShouldSyncNotOverwriteFeatureFlags()
     {
 
-        factory(FeatureFlag::class)->create(
-            [
-                'key' => 'existing_flag',
-                'variants' => 'on',
-            ]
-        );
+        factory(FeatureFlag::class)->create([
+            'key' => 'existing_flag',
+            'variants' => 'on',
+        ]);
 
         $sync_flags = [
             'existing_flag' => 'off',
@@ -66,11 +62,9 @@ class SyncFlagsCommandTest extends TestCase
     public function testShouldSyncFeatureFlagsSkippingCleanup()
     {
 
-        factory(FeatureFlag::class, 2)->create(
-            [
-                'variants' => 'on',
-            ]
-        );
+        factory(FeatureFlag::class, 2)->create([
+            'variants' => 'on',
+        ]);
 
         $sync_flags = [
             'new_flag' => 'off',
