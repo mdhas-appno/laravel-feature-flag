@@ -21,12 +21,10 @@ class FeatureFlagTest extends TestCase
 
         $this->be($this->user);
 
-        factory(FeatureFlag::class)->create(
-            [
-                'key' => 'testing',
-                'variants' => 'on'
-            ]
-        );
+        factory(FeatureFlag::class)->create([
+            'key' => 'testing',
+            'variants' => 'on'
+        ]);
 
         $this->registerFeatureFlags();
 
@@ -39,12 +37,10 @@ class FeatureFlagTest extends TestCase
 
         $this->be($this->user);
 
-        factory(FeatureFlag::class)->create(
-            [
-                'key' => 'testing',
-                'variants' => 'off'
-            ]
-        );
+        factory(FeatureFlag::class)->create([
+            'key' => 'testing',
+            'variants' => 'off'
+        ]);
 
         $this->registerFeatureFlags();
 
@@ -58,18 +54,16 @@ class FeatureFlagTest extends TestCase
 
         $this->be($this->user);
 
-        factory(FeatureFlag::class)->create(
-            [
-                'key' => 'testing',
-                'variants' => [
-                    'users' => [
-                        'foo@gmail.com',
-                        'foo2@gmail.com',
-                        'foo3@gmail.com'
-                    ]
+        factory(FeatureFlag::class)->create([
+            'key' => 'testing',
+            'variants' => [
+                'users' => [
+                    'foo@gmail.com',
+                    'foo2@gmail.com',
+                    'foo3@gmail.com'
                 ]
             ]
-        );
+        ]);
 
         $this->registerFeatureFlags();
 
@@ -84,18 +78,16 @@ class FeatureFlagTest extends TestCase
 
         $this->be($this->user);
 
-        factory(FeatureFlag::class)->create(
-            [
-                'key' => 'testing',
-                'variants' => [
-                    'users' => [
-                        'foo@gmail.com',
-                        'foo2@gmail.com',
-                        'foo3@gmail.com'
-                    ]
+        factory(FeatureFlag::class)->create([
+            'key' => 'testing',
+            'variants' => [
+                'users' => [
+                    'foo@gmail.com',
+                    'foo2@gmail.com',
+                    'foo3@gmail.com'
                 ]
             ]
-        );
+        ]);
 
         $this->registerFeatureFlags();
 
@@ -119,16 +111,14 @@ class FeatureFlagTest extends TestCase
 
         $this->be($this->user);
 
-        factory(FeatureFlag::class)->create(
-            [
-                'key' => 'testing',
-                'variants' => [
-                    'roles' => [
-                        'admin'
-                    ]
+        factory(FeatureFlag::class)->create([
+            'key' => 'testing',
+            'variants' => [
+                'roles' => [
+                    'admin'
                 ]
             ]
-        );
+        ]);
 
         $this->registerFeatureFlags();
 
@@ -142,16 +132,14 @@ class FeatureFlagTest extends TestCase
 
         $this->be($this->user);
 
-        factory(FeatureFlag::class)->create(
-            [
-                'key' => 'testing',
-                'variants' => [
-                    'roles' => [
-                        'admin', 'manager'
-                    ]
+        factory(FeatureFlag::class)->create([
+            'key' => 'testing',
+            'variants' => [
+                'roles' => [
+                    'admin', 'manager'
                 ]
             ]
-        );
+        ]);
 
         $this->registerFeatureFlags();
 
@@ -170,17 +158,15 @@ class FeatureFlagTest extends TestCase
             ])
         ]);
 
-        factory(FeatureFlag::class)->create(
-            [
-                'key' => 'testing',
-                'variants' => [
-                    'teams' => [
-                        'Team 1',
-                        'Team 2'
-                    ]
+        factory(FeatureFlag::class)->create([
+            'key' => 'testing',
+            'variants' => [
+                'teams' => [
+                    'Team 1',
+                    'Team 2'
                 ]
             ]
-        );
+        ]);
 
         $this->registerFeatureFlags();
         $this->be($this->user);
@@ -197,16 +183,14 @@ class FeatureFlagTest extends TestCase
 
         $this->be($this->user);
 
-        factory(FeatureFlag::class)->create(
-            [
-                'key' => 'testing',
-                'variants' => [
-                    'teams' => [
-                        'Team 3'
-                    ]
+        factory(FeatureFlag::class)->create([
+            'key' => 'testing',
+            'variants' => [
+                'teams' => [
+                    'Team 3'
                 ]
             ]
-        );
+        ]);
 
         $this->registerFeatureFlags();
 

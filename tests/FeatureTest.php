@@ -6,17 +6,19 @@ use Mockery;
 use Illuminate\Support\Facades\DB;
 use FriendsOfCat\LaravelFeatureFlags\Feature;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlag;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlagUser;
 use FriendsOfCat\LaravelFeatureFlags\FeatureFlagHelper;
-use FriendsOfCat\LaravelFeatureFlags\FeatureFlagsForJavascript;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use FriendsOfCat\LaravelFeatureFlags\FeatureFlagsForJavascript;
 
 /**
  * @coversDefaultClass \FriendsOfCat\LaravelFeatureFlags\Feature
  */
 class FeatureTest extends TestCase
 {
-    use DatabaseTransactions, FeatureFlagHelper;
+    use RefreshDatabase;
+    use FeatureFlagHelper;
 
     /**
      * @test
