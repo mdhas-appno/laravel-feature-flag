@@ -9,7 +9,7 @@ class FeatureFlag extends Model
 {
     protected $fillable = [
         'key',
-        'variant'
+        'variants'
     ];
 
     protected $casts = [
