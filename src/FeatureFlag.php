@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class FeatureFlag extends Model
 {
+    protected $fillable = [
+        'key',
+        'variant'
+    ];
+
     protected $casts = [
         'variants' => 'json',
     ];
