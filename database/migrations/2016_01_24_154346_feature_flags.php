@@ -12,12 +12,13 @@ class FeatureFlags extends Migration
      */
     public function up()
     {
-        Schema::create('feature_flags', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('key');
-            $table->text('variants');
-        });
-
+        if (!Schema::hasTable('feature_flags')) {
+            Schema::create('feature_flags', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('key');
+                $table->text('variants');
+            });
+        }
     }
 
     /**
